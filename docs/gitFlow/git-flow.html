@@ -64,6 +64,10 @@ git commit -m "Added file tutorial.txt"
             Po parametrze -m podajemy treść commita. Ważne, żeby mówiła ona z technicznego punkty wiedzenia co zostało
             zmienione np. "Dodano klasę Dog." lub "Zaimplementowano metodę move w Dog". Najlepiej języku angielskim, ale
             po polsku w tym projekcie jest do zaakceptowania.
+            <h3>4. Zpushuj zmiany na serwer zdalny.</h3>
+            <pre>
+$git push
+            </pre>
         </div>
         <div class="single">
             <h2>Git flow</h2>
@@ -73,6 +77,83 @@ $git checkout develop
 Switched to branch 'develop'
             </pre>
             <h3>2. Sprawdzamy czy mamy aktualne zmiany z serwera zdalnego.</h3>
+            <pre>
+$git pull
+Already up to date.
+            </pre>
+            <h3>3. Tworzymy nowego brancha o nazwie feature-<i>nazwa-funkcjonalnosci</i>:</h3>
+            <pre>
+$git checkout -b feature-nazwa-funkcjonalnosci
+Switched to a new branch 'feature-nazwa-funkcjonalnosci'
+            </pre>
+            <h3>4. Pushujemy nowego brancha na zdalny serwer.</h3>
+            <pre>
+$git push --set-upstream origin feature-nazwa-funkcjonalnosci
+            </pre>
+            <h3>5. Piszemy kod implementujący daną funkcjonalność i commitujemy.</h3>
+            Piszemy kod implementujący daną funkcjonalność i commitujemy zgodnie z poradnikiem po lewej stronie. W
+            idealnej sytuacji do jednej funkcjonalności powinno powstać parę commitów, ale w tym projekcie nie jest to
+            konieczne.
+            <h3>6. Mergowanie zmian na branch develop.</h3>
+            <span class="red">UWAGA! Na tym etapie wszystkie zmiany powinny zostać zacommitowane. Podczas tej operacji
+                może wystąpić merge conflict. W takiej sytuacji należy skorzystać z poradnika niżej.</span>
+            <pre>
+$git checkout develop
+Switched to branch 'develop'
+$git pull
+$git merge --no-ff -m "Dodano nową fukncjonalność." feature-nazwa-funkcjonalnosci
+Merge made by the 'recursive' strategy.
+ tutorial.txt | 1 +
+ 1 file changed, 1 insertion(+)
+            </pre>
+            <span class="red">UWAGA! Ważna jest flaga --no-ff.</span> Po parametrze -m należy podać wiadomość co zostało
+            dodane
+            z 'biznesowego' punktu widzenia.</span>
+            <h3>7. Usuwanie brancha lokalnego i zdalnego.</h3>
+            <pre>
+$git branch -d feature-nazwa-funkcjonalnosci
+$git push --delete origin feature-nazwa-funkcjonalnosci
+            </pre>
+            <h3>8. Pushowanie zmian na serwer zdalny.</h3>
+            <pre>
+$git push
+            </pre>
+        </div>
+        <div class="single">
+            <h2>Pełny tutorial gita</h2>
+            <a href="https://www.youtube.com/watch?v=D6EI7EbEN4Q">Youtube</a>
+        </div>
+        <div class="single">
+            <h2>Rozwiązywanie merge conflictów</h2>
+            <pre>
+$git merge --no-ff -m "merge2" hejo2
+Auto-merging tutorial.txt
+CONFLICT (content): Merge conflict in tutorial.txt
+Automatic merge failed; fix conflicts and then commit the result.
+            </pre>
+            <h3>1.Wejdź do problematycznego pliku. W tym przypadku tutorial.txt</h3>
+            Zawartość pliku tutorial.txt:
+            <pre>
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Grzegorz Brzeczyszczykiewicz. Powiat Lekolody.
+=======
+Grzegorz Brzeczysczykiewicz. Powiat Łekołody
+>>>>>>> hejo2
+            </pre>
+            Między wyrazem HEAD, a ======= znajduje się wersja pliku, która aktualnie jest na branchu na który
+            mergujemy, czyli develop. Między =======, a >>>>>>> znajduje się, wersja znajdująca się na
+            feature-nazwa-funkcjonalnosci branchu. Należy określić która wersja jest prawdziwa. Raz może być właściwa
+            pierwsza, a raz druga. Może być też tak,
+            że każda z nich zawiera trochę prawdy, czyli tak jak w tym przypadku. Modyfikujemy plik i go zapisujemy:
+            <pre>
+Grzegorz Brzeczyszczykiewicz. Powiat Łekołody.
+            </pre>
+            <h3>2. Commitujemy zmiany.</h3>
+            <pre>
+$git add .
+$git commit -m "merge2"
+[develop b7ef195] merge2
+            </pre>
         </div>
     </div>
 
