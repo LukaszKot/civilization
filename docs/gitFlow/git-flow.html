@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Git flow</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Git</h1>
+    <div id="container">
+        <div class="single">
+            <h2>Pojedynczy commit</h2>
+            <span class="red">UWAGA! W tym przykładzie zmiany zostały zacommitowane na branch master. Normalnie robimy
+                to na branch feature-***.</span>
+            <h3>1. Sprawdź jakie pliki są dodane do stage:</h3>
+            <pre>
+$git status
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+
+        <span class="red">tutorial.txt</span>
+
+nothing added to commit but untracked files present (use "git add" to track)
+            </pre>
+            Został utworzony plik <span class="red">tutorial.txt</span>, ale nie został on dodany do stage.
+            <h3>2. Dodaj plik do stage: </h3>
+            <pre>
+$git add tutorial.txt
+$git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+    (use "git rm --cached &lt;file&gt;..." to unstage)
+
+            <span class="green">new file:   tutorial.txt</span>
+            </pre>
+            lub
+            <pre>
+$git add .
+$git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached &lt;file&gt;..." to unstage)
+
+            <span class="green">new file:   tutorial.txt</span>
+            </pre>
+            Do stage został dodany plik <span class="green">tutorial.txt</span>. Teraz będzie można go zacommitować.
+            <h3>3. Zacommituj zmiany:</h3>
+            <pre>
+git commit -m "Added file tutorial.txt"
+[master (root-commit) aa45725] Added file tutorial.txt
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 tutorial.txt
+            </pre>
+            Po parametrze -m podajemy treść commita. Ważne, żeby mówiła ona z technicznego punkty wiedzenia co zostało
+            zmienione np. "Dodano klasę Dog." lub "Zaimplementowano metodę move w Dog". Najlepiej języku angielskim, ale
+            po polsku w tym projekcie jest do zaakceptowania.
+        </div>
+        <div class="single">
+            <h2>Git flow</h2>
+            <h3>1. Upewniamy się, że jesteśmy na branchu develop.</h3>
+            <pre>
+$git checkout develop
+Switched to branch 'develop'
+            </pre>
+            <h3>2. Sprawdzamy czy mamy aktualne zmiany z serwera zdalnego.</h3>
+        </div>
+    </div>
+
+</body>
+
+</html>
