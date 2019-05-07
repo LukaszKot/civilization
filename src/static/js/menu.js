@@ -34,12 +34,22 @@ function adding_players() {
         { id: 1, nick: "Halpon" },
         { id: 2, nick: "MisterCodePL" }
     ]
-    for (var i = 0; i < players.lenght; i++) {
+    for (var i = 0; i < players.length; i++) {
         $("#list_of_players")
             .append("<div id='player_" + (i + 1) + "'></div>")
         $("#player_" + (i + 1))
-            .css("background-color", "rgba(0, 0, 0, 0.85)")
-            .append("<p id='player_lp_" + (i + 1) + "'>Lp. : " + players[i].id + "</p>")
-            .append("<p id='player_nick_" + (i + 1) + "'>Nick : " + players[i].nick + "</p>")
+            .css("color", "silver")
+            .append("<p id='player_lp_" + (i + 1) + "'>Lp.: " + players[i].id + "</p>")
+            .append("<p id='player_nick_" + (i + 1) + "'>Nick: " + players[i].nick + "</p>")
+        $("#player_lp_" + (i + 1))
+            .css("position", "absolute")
+            .css("top", ((i + 1) * 5) + "%")
+            .css("right", "5%")
+            .css("font-family", "Courier New")
+        $("#player_nick_" + (i + 1))
+            .css("position", "absolute")
+            .css("top", ((i + 1) * 5) + "%")
+            .css("left", "5%")
+            .css("font-family", "Courier New")
     }
 }
