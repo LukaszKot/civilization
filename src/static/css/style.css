@@ -1,0 +1,78 @@
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+#main {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0px;
+    padding: 0px;
+    background-image: url("../cfx/background.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+}
+
+#menu {
+    background-color: rgba(0, 50, 126, 0.6);
+    width: 80%;
+    height: 80%;
+    margin: 0 auto;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 5%;
+    margin-bottom: 4%;
+    border: 2px solid gold;
+}
+
+#list_of_players {
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 2px solid gold;
+    position: absolute;
+    left: 12%;
+    top: 30%;
+    width: 50%;
+    height: 50%;
+}
+
+#interial_menu {
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 2px solid gold;
+    position: absolute;
+    right: 12%;
+    top: 30%;
+    width: 20%;
+    height: 50%;
+}
+
+#name1 {
+    position: absolute;
+    top: 5%;
+    left: 40%;
+    color: gold;
+    font-size: 75px;
+    font-family: fantasy;
+}
+
+#name2 {
+    left: 12%;
+}
+
+#name3 {
+    right: 26%;
+}
+
+#new_game {
+    top: 15%;
+    right: 26%;
+}
+
+#saved_game {
+    top: 45%;
+    right: 20%;
+}
