@@ -76,3 +76,32 @@ body {
     top: 45%;
     right: 20%;
 }
+
+.name {
+    color: gold;
+    font-size: 50px;
+    position: absolute;
+    top: 17%;
+    font-family: fantasy;
+}
+
+.menu_buttons {
+    font-family: fantasy;
+    color: gold;
+    font-size: 40px;
+    position: absolute;
+    background-color: rgba(192, 192, 192, 0.6);
+}
+
+.nextPlayer {
+    color: silver;
+    font-family: Courier New;
+}
+
+.playerId {
+    display: block;
+}
+
+.playerNick {
+    display: inline;
+}
