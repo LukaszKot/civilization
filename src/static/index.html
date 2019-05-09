@@ -6,6 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" type="image/png" sizes="16x16" href="/gfx/favicon-16x16.png">
+    <script src="/js/libs/jquery331.js"></script>
+    <script src="/js/HttpClient.js"></script>
+    <script>
+        var httpClient = new HttpClient();
+        httpClient.get("/api/lobbies")
+            .then(x => console.log(x))
+    </script>
     <title>Document</title>
 </head>
 
