@@ -7,32 +7,48 @@ class LobbyView {
         main.empty();
 
         this.menu = $("<div>").attr("id", "menu")
-            .append($("<p>").attr("id", "name1").html("Civilization VII"))
-            .append($("<p>").attr("id", "name2").addClass("name").html("Lista graczy"))
-            .append($("<p>").attr("id", "name3").addClass("name").html("Menu"))
-        this._createListOfPlayers();
-        this._createInterialMenu();
+            .append($("<p>").attr("id", "nameOfGame").html("Civilization VII"))
+            .append($("<p>").attr("id", "nameOfPlayers").addClass("names").html("Lista graczy"))
+            .append($("<p>").attr("id", "nameOfMenu").addClass("names").html("Menu"))
         main.append(this.menu)
+        this._createListOfPlayers();
+        this._createInternalMenu();
     }
 
     _createListOfPlayers() {
-        this.listOfPlayers = $("<div>").attr("id", "list_of_players")
+        this.listOfPlayers = $("<div>").attr("id", "listOfPlayers")
         this.menu.append(this.listOfPlayers);
         this._addingPlayers();
     }
 
-    _createInterialMenu() {
-        this.newGameButton = $("<button>").attr("id", "new_game")
-            .addClass("menu_buttons")
+    _createInternalMenu() {
+        this.newGameButton = $("<button>").attr("id", "newGame")
+            .addClass("menuButtons")
             .html("Nowa Gra")
-        this.savedGameButton = $("<button>").attr("id", "saved_game")
-            .addClass("menu_buttons")
+        this.savedGameButton = $("<button>").attr("id", "savedGame")
+            .addClass("menuButtons")
             .html("Wczytaj Grę")
+        this.backButton = $("<button>").attr("id", "back")
+            .addClass("menuButtons")
+            .html("Powrót")
 
-        var interialMenu = $("<div>").attr("id", "interial_menu")
+        var internalMenu = $("<div>").attr("id", "internalMenu")
             .append(this.newGameButton)
             .append(this.savedGameButton)
-        this.menu.append(interialMenu);
+            .append(this.backButton)
+        this.menu.append(internalMenu);
+    }
+
+    _creatingListOfCivs() {
+        this.civs = ["USA", "ROSJA"]
+        this.nextPlayerCiv = $("<select>")
+            .addClass("chosingCivs")
+        for (var i = 0; i < this.civs.length; i++) {
+            this.addingCivs = $("<option>")
+                .html(this.civs[i])
+            this.nextPlayerCiv.append(this.addingCivs)
+        }
+
     }
 
     _addingPlayers() {
@@ -41,19 +57,24 @@ class LobbyView {
             { id: 2, nick: "MisterCodePL" }
         ]
         for (var i = 0; i < this.players.length; i++) {
-            this.nextPlayerId = ("<div>")
+            this.nextPlayerId = $("<div>")
                 .addClass("playerId")
                 .html("Lp. " + this.players[i].id)
-            this.nextPlayerNick = ("<div>")
+            this.nextPlayerNick = $("<div>")
                 .addClass("playerNick")
                 .html("Nick: " + this.players[i].nick)
-
+            this.nextCivName = $("<div>")
+                .addClass("civName")
+                .html("Cywilizacja: ")
+            this._creatingListOfCivs();
             var nextPlayer = $("<div>").addClass("nextPlayer")
                 .append(this.nextPlayerId)
                 .append(this.nextPlayerNick)
-
+                .append(this.nextPlayerCiv)
+                .append(this.nextCivName)
             this.listOfPlayers
                 .append(nextPlayer)
         }
     }
 }
+
