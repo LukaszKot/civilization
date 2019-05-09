@@ -5,5 +5,5 @@ const PORT = 3000;
 
 
 app.listen(PORT, function () {
-    console.log("start serwera na porcie " + PORT)
+    console.log("start serwera na porcie" + PORT)
 })
