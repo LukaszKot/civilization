@@ -1,5 +1,7 @@
+var menuView;
 var lobbyView;
+var loginningView;
 $(document).ready(function () {
-    lobbyView = new LobbyView();
-    lobbyView.render();
+    loginningView = new LoginningView();
+    loginningView.render();
 })

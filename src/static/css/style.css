@@ -124,3 +124,67 @@ body {
     background-color: black;
     color: silver;
 }
+
+#nameOfMainMenu {
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 1%;
+    color: gold;
+    font-size: 50px;
+    font-family: fantasy;
+}
+
+#mainMenu {
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 2px solid gold;
+    position: relative;
+    margin: 0 auto;
+    margin-top: 5%;
+    width: 30%;
+    height: 50%;
+}
+
+.mainMenuButtons {
+    position: relative;
+    width: 88%;
+    height: 24%;
+    margin: 4%;
+    margin-left: 6%;
+    font-family: fantasy;
+    color: gold;
+    font-size: 40px;
+    background-color: rgba(192, 192, 192, 0.6);
+}
+
+#nameOfLoginningMenu {
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 1%;
+    color: gold;
+    font-size: 50px;
+    font-family: fantasy;
+}
+
+.loginningMenuFields {
+    position: relative;
+    width: 88%;
+    height: 24%;
+    margin: 4%;
+    margin-left: 6%;
+    font-family: fantasy;
+    color: gold;
+    font-size: 40px;
+    background-color: rgba(192, 192, 192, 0.6);
+}
+
+#nicknameField {
+    height: 50%;
+    width: 90%;
+    margin: 4%;
+    margin-top: 5%;
+}
+
+#nickname {
+    margin: 3%;
+    margin-left: 6%;
+}

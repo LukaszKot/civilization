@@ -31,6 +31,10 @@ class LobbyView {
         this.backButton = $("<button>").attr("id", "back")
             .addClass("menuButtons")
             .html("Powrót")
+            .on("click", () => {
+                menuView = new MenuView(),
+                    menuView.render()
+            })
 
         var internalMenu = $("<div>").attr("id", "internalMenu")
             .append(this.newGameButton)
