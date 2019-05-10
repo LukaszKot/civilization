@@ -1,4 +1,4 @@
-var http = require("http")
+var http = require("http");
 var express = require("express")
 var app = express()
 const PORT = 3000;
@@ -7,6 +7,12 @@ app.use(express.static('static'))
 app.use(express.json())
 var path = require('path')
 var Datastore = require('nedb')
+
+var server = app.listen(PORT, function () {
+    console.log("start serwera na porcie " + PORT)
+})
+
+var io = require('socket.io')(server);
 
 class LobbiesRepository {
     constructor() {
@@ -51,6 +57,10 @@ class LobbiesRepository {
 
 var lobbiesRepository = new LobbiesRepository();
 
+io.on('connection', (socket) => {
+    console.log("connection")
+})
+
 app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname + "/static/index.html"))
 })
@@ -88,8 +98,4 @@ app.post("/api/lobbies", function (req, res) {
                 }
             })
         })
-})
-
-app.listen(PORT, function () {
-    console.log("start serwera na porcie " + PORT)
 })
