@@ -15,12 +15,21 @@ class Net {
         return this._httpClient.post("/api/lobbies", payload)
     }
 
-    joinTheLobby(username, lobbyName) {
+    joinTheLobby(lobbyName, username) {
         var payload = {
             name: username,
             lobby: lobbyName
         }
         this._socketClient.publishCommand("JOIN_THE_LOBBY", payload)
+    }
+
+    chooseCivilization(lobbyName, username, civilization) {
+        var payload = {
+            lobby: lobbyName,
+            name: username,
+            civilization: civilization
+        }
+        this._socketClient.publishCommand("CHOOSE_CIVILIZATION", payload)
     }
 
     onLobbyIsAlreadyFull(callback) {
@@ -35,7 +44,19 @@ class Net {
         this._socketClient.subscribeEvent("GIVEN_NAME_IS_ALREADY_TAKEN", callback)
     }
 
-    lobbyDoesNotExist(callback) {
+    onLobbyDoesNotExist(callback) {
         this._socketClient.subscribeEvent("LOBBY_DOES_NOT_EXIST", callback)
+    }
+
+    onPlayerDoesNotExist(callback) {
+        this._socketClient.subscribeEvent("PLAYER_DOES_NOT_EXIST", callback)
+    }
+
+    onCivilizationIsAlreadyChoosen(callback) {
+        this._socketClient.subscribeEvent("CIVILIZATION_IS_ALREADY_CHOOSEN", callback)
+    }
+
+    onCivilizationChoosen(callback) {
+        this._socketClient.subscribeEvent("CIVILIZATION_CHOOSEN", callback)
     }
 }

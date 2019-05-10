@@ -15,7 +15,20 @@ $(document).ready(function () {
         console.log("given name is already taken")
     })
 
-    net.lobbyDoesNotExist(event => {
+    net.onLobbyDoesNotExist(event => {
         console.log("lobby does not exist")
+    })
+
+    net.onPlayerDoesNotExist(event => {
+        console.log("player does not exist")
+    })
+
+    net.onCivilizationIsAlreadyChoosen(event => {
+        console.log("civilization is already choosen")
+    })
+
+    net.onCivilizationChoosen(event => {
+        console.log("civilization choosen")
+        console.log(event)
     })
 })
