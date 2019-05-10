@@ -14,6 +14,7 @@ var server = app.listen(PORT, function () {
 
 var io = require('socket.io')(server);
 
+var sockets = []
 class LobbiesRepository {
     constructor() {
         this._collection = new Datastore({
@@ -53,12 +54,53 @@ class LobbiesRepository {
             })
         })
     }
+
+    update(lobby) {
+        return new Promise((accept, reject) => {
+            this._collection.update({ _id: lobby._id }, { $set: lobby }, {}, (err, numUpdated) => {
+                if (err) reject(err)
+                accept(lobby)
+            })
+        })
+    }
 }
 
 var lobbiesRepository = new LobbiesRepository();
 
 io.on('connection', (socket) => {
-    console.log("connection")
+    socket.on("JOIN_THE_LOBBY", (msg) => {
+        var socketObject = {
+            socket: socket,
+            name: msg.name,
+            lobby: msg.lobby
+        }
+        sockets.push(socketObject)
+        var currentLobby = []
+        for (var i = 0; i < sockets.length; i++) {
+            if (sockets[i].lobby == msg.name) {
+                currentLobby.push(sockets[i])
+            }
+        }
+        if (currentLobby.length > 2) {
+            socket.emit("LOBBY_IS_ALREADY_FULL")
+        }
+        else {
+            lobbiesRepository.getSingle(msg.name)
+                .then(x => {
+                    var player = {
+                        name: player.name,
+                        civilization: null
+                    }
+                    x.players.push(player)
+                    return lobbiesRepository.update(x)
+                })
+                .then(x => {
+                    currentLobby.forEach(theSocket => {
+                        theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", x)
+                    });
+                })
+        }
+    })
 })
 
 app.get("/", function (req, res) {
