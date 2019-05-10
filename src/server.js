@@ -69,37 +69,58 @@ var lobbiesRepository = new LobbiesRepository();
 
 io.on('connection', (socket) => {
     socket.on("JOIN_THE_LOBBY", (msg) => {
-        var socketObject = {
-            socket: socket,
-            name: msg.name,
-            lobby: msg.lobby
-        }
-        sockets.push(socketObject)
-        var currentLobby = []
-        for (var i = 0; i < sockets.length; i++) {
-            if (sockets[i].lobby == msg.name) {
-                currentLobby.push(sockets[i])
-            }
-        }
-        if (currentLobby.length > 2) {
-            socket.emit("LOBBY_IS_ALREADY_FULL")
-        }
-        else {
-            lobbiesRepository.getSingle(msg.name)
-                .then(x => {
+        var command = JSON.parse(msg)
+        var currentLobby;
+        lobbiesRepository.getSingle(command.lobby)
+            .then(x => {
+                if (x == null) throw "LOBBY_DOES_NOT_EXIST"
+                var socketObject = {
+                    socket: socket,
+                    name: command.name,
+                    lobby: command.lobby
+                }
+                sockets.push(socketObject)
+                currentLobby = []
+                for (var i = 0; i < sockets.length; i++) {
+                    if (sockets[i].lobby == command.lobby) {
+                        currentLobby.push(sockets[i])
+                    }
+                }
+                if (currentLobby.length > 2) {
+                    for (var i = sockets.length - 1; i >= 0; i--) {
+                        if (sockets[i].name == command.name && sockets[i].lobby == command.lobby) {
+                            sockets.splice(i, 1)
+                            throw "LOBBY_IS_ALREADY_FULL";
+                        }
+                    }
+
+                }
+                else if (currentLobby.length == 2 && currentLobby[0].name == currentLobby[1].name) {
+                    for (var i = sockets.length - 1; i >= 0; i--) {
+                        if (sockets[i].name == command.name && sockets[i].lobby == command.lobby) {
+                            sockets.splice(i, 1)
+                            throw "GIVEN_NAME_IS_ALREADY_TAKEN";
+                        }
+                    }
+                }
+                else {
                     var player = {
-                        name: player.name,
+                        name: command.name,
                         civilization: null
                     }
                     x.players.push(player)
                     return lobbiesRepository.update(x)
-                })
-                .then(x => {
-                    currentLobby.forEach(theSocket => {
-                        theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", x)
-                    });
-                })
-        }
+
+                }
+            })
+            .then(x => {
+                if (x) currentLobby.forEach(theSocket => {
+                    theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", JSON.stringify(x))
+                });
+            })
+            .catch(x => {
+                socket.emit(x, JSON.stringify({}))
+            })
     })
 })
 
@@ -114,7 +135,7 @@ app.get("/api/lobbies", function (req, res) {
             x.forEach(element => {
                 dto.push({
                     name: element.name,
-                    players: element.players,
+                    players: element.players.length,
                     save: element.save
                 })
             });
