@@ -116,7 +116,37 @@ io.on('connection', (socket) => {
             .then(x => {
                 if (x) currentLobby.forEach(theSocket => {
                     theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", JSON.stringify(x))
-                });
+
+                    socket.on("CHOOSE_CIVILIZATION", (msg) => {
+                        var command = JSON.parse(msg)
+                        lobbiesRepository.getSingle(command.lobby)
+                            .then(x => {
+                                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
+                                var isPlayerExist = false
+                                for (var i = 0; i < x.players.length; i++) {
+                                    if (x.players[i].name == command.name) {
+                                        isPlayerExist = true;
+                                        x.players[i].civilization == command.civilization;
+                                    }
+                                }
+                                if (!isPlayerExist) throw "PLAYER_DOES_NOT_EXIST";
+                                if (x.players[0].civilization == x.players[1].civilization && x.players[0].civilization != null) {
+                                    throw "CIVILIZATION_IS_ALREADY_CHOOSEN"
+                                }
+
+                                return lobbiesRepository.update(x)
+                            })
+                            .then(x => {
+                                if (x) currentLobby.forEach(theSocket => {
+                                    theSocket.socket.emit("CIVILIZATION_CHOOSEN", JSON.stringify(x))
+                                })
+                            })
+                            .catch(x => {
+                                socket.emit(x, JSON.stringify({}))
+                            })
+                    });
+                })
+
             })
             .catch(x => {
                 socket.emit(x, JSON.stringify({}))
