@@ -32,6 +32,13 @@ class Net {
         this._socketClient.publishCommand("CHOOSE_CIVILIZATION", payload)
     }
 
+    renderMap(lobbyName) {
+        var payload = {
+            lobby: lobbyName
+        }
+        this._socketClient.publishCommand("RENDER_MAP", payload)
+    }
+
     onLobbyIsAlreadyFull(callback) {
         this._socketClient.subscribeEvent("LOBBY_IS_ALREADY_FULL", callback)
     }
@@ -58,5 +65,9 @@ class Net {
 
     onCivilizationChoosen(callback) {
         this._socketClient.subscribeEvent("CIVILIZATION_CHOOSEN", callback)
+    }
+
+    onMapRendered(callback) {
+        this._socketClient.subscribeEvent("MAP_RENDERED", callback)
     }
 }

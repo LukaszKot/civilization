@@ -150,6 +150,12 @@ io.on('connection', (socket) => {
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
                 if (x == null) throw "LOBBY_DOES_NOT_EXIST";
+                currentLobby = []
+                for (var i = 0; i < sockets.length; i++) {
+                    if (command.lobby == sockets[i].lobby) {
+                        currentLobby.push(sockets[i])
+                    }
+                }
                 var isPlayerExist = false
                 for (var i = 0; i < x.players.length; i++) {
                     if (x.players[i].name == command.name) {
@@ -181,6 +187,12 @@ io.on('connection', (socket) => {
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
                 if (x == null) throw "LOBBY_DOES_NOT_EXIST";
+                currentLobby = []
+                for (var i = 0; i < sockets.length; i++) {
+                    if (command.lobby == sockets[i].lobby) {
+                        currentLobby.push(sockets[i])
+                    }
+                }
                 lobby = x;
                 var tiles = []
                 var mapSize = {
@@ -222,15 +234,15 @@ io.on('connection', (socket) => {
                 return lobbiesRepository.update(lobby)
             })
             .then(x => {
-                if (x) currentLobby.forEach(theSocket => {
-                    var dto = {
-                        name: lobby.name,
-                        players: lobby.players,
-                        save: {
-                            turn: save.turn,
-                            map: save.map.size
-                        }
+                var dto = {
+                    name: lobby.name,
+                    players: lobby.players,
+                    save: {
+                        turn: save.turn,
+                        map: save.map.size
                     }
+                }
+                if (x) currentLobby.forEach(theSocket => {
                     theSocket.socket.emit("MAP_RENDERED", JSON.stringify(dto))
                 })
             })
