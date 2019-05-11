@@ -26,7 +26,6 @@ class SocketClient {
 
     reconnect() {
         this._socket = io();
-        console.log(this._registrations)
         for (let i = 0; i < this._registrations.length; i++) {
             this._socket.on(this._registrations[i].eventName, (msg) => {
                 var event = JSON.parse(msg)
