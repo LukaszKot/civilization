@@ -31,4 +31,9 @@ $(document).ready(function () {
         console.log("civilization choosen")
         console.log(event)
     })
+
+    net.onMapRendered(event => {
+        console.log("map rendered")
+        console.log(event)
+    })
 })

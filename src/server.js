@@ -15,6 +15,25 @@ var server = app.listen(PORT, function () {
 var io = require('socket.io')(server);
 
 var sockets = []
+
+class SavesRepository {
+    constructor() {
+        this._collection = new Datastore({
+            filename: "db/saves.db",
+            autoload: true
+        })
+    }
+
+    insert(save) {
+        return new Promise((accept, reject) => {
+            this._collection.insert(save, (err, newDoc) => {
+                if (err) reject(err);
+                accept(newDoc);
+            })
+        })
+    }
+}
+
 class LobbiesRepository {
     constructor() {
         this._collection = new Datastore({
@@ -66,6 +85,7 @@ class LobbiesRepository {
 }
 
 var lobbiesRepository = new LobbiesRepository();
+var savesRepository = new SavesRepository();
 
 io.on('connection', (socket) => {
     var currentLobby;
@@ -130,6 +150,12 @@ io.on('connection', (socket) => {
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
                 if (x == null) throw "LOBBY_DOES_NOT_EXIST";
+                currentLobby = []
+                for (var i = 0; i < sockets.length; i++) {
+                    if (command.lobby == sockets[i].lobby) {
+                        currentLobby.push(sockets[i])
+                    }
+                }
                 var isPlayerExist = false
                 for (var i = 0; i < x.players.length; i++) {
                     if (x.players[i].name == command.name) {
@@ -153,6 +179,77 @@ io.on('connection', (socket) => {
                 socket.emit(x, JSON.stringify({}))
             })
     });
+
+    socket.on("RENDER_MAP", (msg) => {
+        var command = JSON.parse(msg);
+        var lobby;
+        var save;
+        lobbiesRepository.getSingle(command.lobby)
+            .then(x => {
+                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
+                currentLobby = []
+                for (var i = 0; i < sockets.length; i++) {
+                    if (command.lobby == sockets[i].lobby) {
+                        currentLobby.push(sockets[i])
+                    }
+                }
+                lobby = x;
+                var tiles = []
+                var mapSize = {
+                    width: 100,
+                    height: 50
+                }
+                for (var i = 0; i < 100; i++) {
+                    for (var j = 0; j < 50; j++) {
+                        var tile = {
+                            id: mapSize.width * j + i,
+                            position: {
+                                x: i,
+                                z: j
+                            },
+                            resources: {
+                                food: Math.floor(Math.random() * 6),
+                                gold: Math.floor(Math.random() * 6),
+                                production: Math.floor(Math.random() * 6)
+                            },
+                        }
+                        tiles.push(tile)
+                    }
+                }
+                var save = {
+                    turn: 0,
+                    map: {
+                        size: {
+                            width: mapSize.width,
+                            height: mapSize.height
+                        },
+                        tiles: tiles
+                    }
+                }
+                return savesRepository.insert(save)
+            })
+            .then(x => {
+                save = x;
+                lobby.save = x._id;
+                return lobbiesRepository.update(lobby)
+            })
+            .then(x => {
+                var dto = {
+                    name: lobby.name,
+                    players: lobby.players,
+                    save: {
+                        turn: save.turn,
+                        map: save.map.size
+                    }
+                }
+                if (x) currentLobby.forEach(theSocket => {
+                    theSocket.socket.emit("MAP_RENDERED", JSON.stringify(dto))
+                })
+            })
+            .catch(x => {
+                socket.emit(x, JSON.stringify({}))
+            })
+    })
 })
 
 app.get("/", function (req, res) {
