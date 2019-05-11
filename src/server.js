@@ -255,7 +255,7 @@ io.on('connection', (socket) => {
         var theSocket;
         for (var i = 0; i < sockets.length; i++) {
             if (sockets[i].socket.id == socket.id) {
-                theSocket = socket[i];
+                theSocket = sockets[i];
                 sockets.splice(i, 1)
                 break;
             }

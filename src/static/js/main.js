@@ -36,4 +36,9 @@ $(document).ready(function () {
         console.log("map rendered")
         console.log(event)
     })
+
+    net.onPlayerDisconnectedFromTheLobby(event => {
+        console.log("player disconnected from the lobby")
+        console.log(event)
+    })
 })

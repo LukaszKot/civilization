@@ -39,6 +39,11 @@ class Net {
         this._socketClient.publishCommand("RENDER_MAP", payload)
     }
 
+    disconnectFromTheLobby() {
+        this._socketClient.disconnect();
+        this._socketClient.reconnect();
+    }
+
     onLobbyIsAlreadyFull(callback) {
         this._socketClient.subscribeEvent("LOBBY_IS_ALREADY_FULL", callback)
     }
@@ -70,4 +75,9 @@ class Net {
     onMapRendered(callback) {
         this._socketClient.subscribeEvent("MAP_RENDERED", callback)
     }
+
+    onPlayerDisconnectedFromTheLobby(callback) {
+        this._socketClient.subscribeEvent("PLAYER_LEAVED_THE_LOBBY", callback)
+    }
+
 }
