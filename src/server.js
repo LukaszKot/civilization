@@ -82,6 +82,15 @@ class LobbiesRepository {
             })
         })
     }
+
+    delete(id) {
+        return new Promise((accept, reject) => {
+            this._collection.remove({ _id: id }, {}, (err, numRemoved) => {
+                if (err) reject(err)
+                accept(numRemoved)
+            })
+        })
+    }
 }
 
 var lobbiesRepository = new LobbiesRepository();
@@ -268,7 +277,7 @@ io.on('connection', (socket) => {
             }
         }
 
-        if (currentLobby.length == 0) return;
+        if (theSocket == null) return;
 
         for (var i = 0; i < currentLobby.length; i++) {
             if (currentLobby[i].socket.id == theSocket.socket.id) {
@@ -292,8 +301,11 @@ io.on('connection', (socket) => {
                 if (x) currentLobby.forEach(theSocket => {
                     theSocket.socket.emit("PLAYER_LEAVED_THE_LOBBY", JSON.stringify(x))
                 })
+                if (x && x.players.length == 0) {
+                    lobbiesRepository.delete(x._id);
+                }
             })
-            .catch(x => { })
+            .catch(x => { console.log(x) })
     })
 })
 
