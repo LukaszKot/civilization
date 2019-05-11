@@ -250,6 +250,51 @@ io.on('connection', (socket) => {
                 socket.emit(x, JSON.stringify({}))
             })
     })
+
+    socket.on('disconnect', () => {
+        var theSocket;
+        for (var i = 0; i < sockets.length; i++) {
+            if (sockets[i].socket.id == socket.id) {
+                theSocket = socket[i];
+                sockets.splice(i, 1)
+                break;
+            }
+        }
+
+        currentLobby = []
+        for (var i = 0; i < sockets.length; i++) {
+            if (sockets[i].lobby == theSocket.lobby) {
+                currentLobby.push(sockets[i])
+            }
+        }
+
+        if (currentLobby.length == 0) return;
+
+        for (var i = 0; i < currentLobby.length; i++) {
+            if (currentLobby[i].socket.id == theSocket.socket.id) {
+                currentLobby.splice(i, 1)
+                break;
+            }
+        }
+
+        lobbiesRepository.getSingle(theSocket.lobby)
+            .then(x => {
+                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
+                for (var i = 0; i < x.players.length; i++) {
+                    if (x.players[i].name == theSocket.name) {
+                        x.players.splice(i, 1)
+                        break;
+                    }
+                }
+                return lobbiesRepository.update(x)
+            })
+            .then(x => {
+                if (x) currentLobby.forEach(theSocket => {
+                    theSocket.socket.emit("PLAYER_LEAVED_THE_LOBBY", JSON.stringify(x))
+                })
+            })
+            .catch(x => { })
+    })
 })
 
 app.get("/", function (req, res) {
