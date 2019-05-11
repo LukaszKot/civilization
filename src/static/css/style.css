@@ -188,3 +188,54 @@ body {
     margin: 3%;
     margin-left: 6%;
 }
+
+.lobbyId {
+    display: block;
+    float: left;
+    width: 100px;
+    margin-left: 20px;
+    margin-right: 60px;
+    margin-top: 20px;
+}
+
+#nameOfLobbys {
+    margin: 0;
+    display: inline-block;
+    margin-left: 40px;
+    margin-top: 1%;
+}
+
+#listOfLobbys {
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 2px solid gold;
+    margin: 0;
+    margin-left: 2%;
+    width: 60%;
+    height: 50%;
+    padding: 0;
+}
+
+.lobbyNick {
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.lobbyValue {
+    margin-top: 20px;
+    float: right;
+    margin-right: 10px;
+}
+
+.lobbyButton {
+    float: right;
+    margin-top: 17px;
+    margin-right: 30px;
+    font-family: Courier New;
+    background-color: black;
+    color: silver;
+}
+
+.nextLobby {
+    color: silver;
+    font-family: Courier New;
+}

@@ -18,23 +18,21 @@ class LoginningView {
 
         this.nickName = $("<form>")
             .addClass("loginningMenuFields")
-            .attr("id","nickname")
+            .attr("id", "nickname")
         this.addingNickname = $("<input>")
             .addClass("loginningMenuFields")
-            .attr("id","nicknameField")
-            .attr("type","text")
-            .attr("name","nickname")
+            .attr("id", "nicknameField")
+            .attr("type", "text")
+            .attr("name", "nickname")
         this.nickName.append(this.addingNickname)
-        console.log(this.nickName);
-
 
         this.newLoginSubmitButton = $("<button>").attr("id", "loginSubmitButton")
             .addClass("loginningMenuFields")
             .addClass("loginningMenuButtons")
             .html("Dalej")
             .on("click", () => {
-                menuView = new MenuView(),
-                    menuView.render()
+                var playerNick = $("#nicknameField").val()
+                menuView.render()
             })
         this.exitButton = $("<button>").attr("id", "exit")
             .addClass("loginningMenuFields")

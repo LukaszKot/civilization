@@ -18,8 +18,7 @@ class MenuView {
             .addClass("mainMenuButtons")
             .html("Gra")
             .on("click", () => {
-                lobbyView = new LobbyView(),
-                    lobbyView.render()
+                lobbysView.render()
             })
         this.tutorialButton = $("<button>").attr("id", "tutorial")
             .addClass("mainMenuButtons")

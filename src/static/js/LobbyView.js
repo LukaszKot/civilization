@@ -22,18 +22,17 @@ class LobbyView {
     }
 
     _createInternalMenu() {
-        this.newGameButton = $("<button>").attr("id", "newGame")
+        this.newGameButton = $("<button>").attr("id", "startGame")
             .addClass("menuButtons")
-            .html("Nowa Gra")
-        this.savedGameButton = $("<button>").attr("id", "savedGame")
+            .html("Start")
+        this.savedGameButton = $("<button>").attr("id", "settingsButton")
             .addClass("menuButtons")
-            .html("Wczytaj Grę")
+            .html("Ustawienia")
         this.backButton = $("<button>").attr("id", "back")
             .addClass("menuButtons")
             .html("Powrót")
             .on("click", () => {
-                menuView = new MenuView(),
-                    menuView.render()
+                lobbysView.render()
             })
 
         var internalMenu = $("<div>").attr("id", "internalMenu")
