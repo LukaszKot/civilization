@@ -47,6 +47,13 @@ class Net {
         this._socketClient.publishCommand("KICK_PLAYER", payload)
     }
 
+    startGame(lobbyName) {
+        var payload = {
+            lobby: lobbyName
+        }
+        this._socketClient.publishCommand("START_GAME", payload)
+    }
+
     disconnectFromTheLobby() {
         this._socketClient.disconnect();
     }
