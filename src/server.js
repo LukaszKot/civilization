@@ -352,9 +352,10 @@ io.on('connection', (socket) => {
     socket.on("START_GAME", (msg) => {
         var command = JSON.parse(msg);
 
+        var lobby;
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
-
+                lobby = x;
                 if (x.players.length != 2) throw "INVALID_PLAYER_NUMBER";
 
                 x.players.forEach(player => {
@@ -364,6 +365,7 @@ io.on('connection', (socket) => {
                 });
 
                 if (x.save == null) throw "SAVE_NOT_SELECTED";
+                return savesRepository.getSingle(x.save)
             })
             .catch(x => socket.emit(x, JSON.stringify({})))
     })
