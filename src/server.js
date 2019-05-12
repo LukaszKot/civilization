@@ -339,6 +339,10 @@ io.on('connection', (socket) => {
                 socket.emit(x, JSON.stringify({}))
             })
     })
+
+    socket.on("START_GAME", (msg) => {
+        var command = JSON.parse(msg);
+    })
 })
 
 app.get("/", function (req, res) {
