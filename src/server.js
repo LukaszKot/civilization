@@ -32,6 +32,15 @@ class SavesRepository {
             })
         })
     }
+
+    getSingle(id) {
+        return new Promise((accept, reject) => {
+            this._collection.findOne({ _id: id }, (err, docs) => {
+                if (err) reject(err);
+                accept(docs)
+            })
+        })
+    }
 }
 
 class LobbiesRepository {
