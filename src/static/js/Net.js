@@ -39,9 +39,16 @@ class Net {
         this._socketClient.publishCommand("RENDER_MAP", payload)
     }
 
+    kickPlayer(lobbyName, playerName) {
+        var payload = {
+            lobby: lobbyName,
+            playerName: playerName
+        }
+        this._socketClient.publishCommand("KICK_PLAYER", payload)
+    }
+
     disconnectFromTheLobby() {
         this._socketClient.disconnect();
-        this._socketClient.reconnect();
     }
 
     onLobbyIsAlreadyFull(callback) {
@@ -78,6 +85,17 @@ class Net {
 
     onPlayerDisconnectedFromTheLobby(callback) {
         this._socketClient.subscribeEvent("PLAYER_LEAVED_THE_LOBBY", callback)
+    }
+
+    onDisconnectFromTheLobby(callback) {
+        this._socketClient.subscribeEvent("disconnect", () => {
+            this._socketClient.reconnect();
+            callback();
+        })
+    }
+
+    onHostCannotBeKicked(callback) {
+        this._socketClient.subscribeEvent("HOST_CANNOT_BE_KICKED", callback)
     }
 
 }

@@ -15,7 +15,14 @@ class SocketClient {
             callback: callback
         })
         this._socket.on(eventName, (msg) => {
-            var event = JSON.parse(msg)
+            var event;
+            try {
+                event = JSON.parse(msg)
+            }
+            catch{
+                event = {}
+            }
+
             callback(event)
         })
     }

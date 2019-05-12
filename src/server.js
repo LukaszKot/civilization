@@ -91,9 +91,15 @@ class LobbiesRepository {
             })
         })
     }
+
+    drop() {
+        this._collection.remove({}, { multi: true }, function (err, numRemoved) {
+        });
+    }
 }
 
 var lobbiesRepository = new LobbiesRepository();
+lobbiesRepository.drop();
 var savesRepository = new SavesRepository();
 
 io.on('connection', (socket) => {
@@ -306,6 +312,32 @@ io.on('connection', (socket) => {
                 }
             })
             .catch(x => { console.log(x) })
+    })
+
+    socket.on("KICK_PLAYER", (msg) => {
+        var command = JSON.parse(msg);
+        var kickedPlayer;
+        lobbiesRepository.getSingle(command.lobby)
+            .then(x => {
+                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
+
+                currentLobby = []
+                for (var i = 0; i < sockets.length; i++) {
+                    if (command.lobby == sockets[i].lobby) {
+                        currentLobby.push(sockets[i])
+                    }
+                }
+
+                if (command.playerName == x.players[0].name) throw "HOST_CANNOT_BE_KICKED";
+                for (var i = 0; i < sockets.length; i++) {
+                    if (sockets[i].name == command.playerName) {
+                        sockets[i].socket.disconnect();
+                    }
+                }
+            })
+            .catch(x => {
+                socket.emit(x, JSON.stringify({}))
+            })
     })
 })
 
