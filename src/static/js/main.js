@@ -41,4 +41,12 @@ $(document).ready(function () {
         console.log("player disconnected from the lobby")
         console.log(event)
     })
+
+    net.onDisconnectFromTheLobby(() => {
+        console.log("you have been disconnected from the lobby")
+    })
+
+    net.onHostCannotBeKicked(() => {
+        console.log("host cannot be kicked")
+    })
 })
