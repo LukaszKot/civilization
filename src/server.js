@@ -41,6 +41,15 @@ class SavesRepository {
             })
         })
     }
+
+    update(save) {
+        return new Promise((accept, reject) => {
+            this._collection.update({ _id: save._id }, { $set: save }, {}, (err, numUpdated) => {
+                if (err) reject(err);
+                accept(save);
+            })
+        })
+    }
 }
 
 class LobbiesRepository {
@@ -160,7 +169,6 @@ io.on('connection', (socket) => {
             .then(x => {
                 if (x) currentLobby.forEach(theSocket => {
                     theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", JSON.stringify(x))
-
                 })
 
             })
@@ -367,6 +375,9 @@ io.on('connection', (socket) => {
 
                 if (x.save == null) throw "SAVE_NOT_SELECTED";
                 return savesRepository.getSingle(x.save)
+            })
+            .then(x => {
+                x.players = lobby.players;
             })
             .catch(x => socket.emit(x, JSON.stringify({})))
     })
