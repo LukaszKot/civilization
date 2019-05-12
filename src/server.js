@@ -116,45 +116,67 @@ class LobbiesRepository {
     }
 }
 
+class SocketRepository {
+    constructor() {
+        this.sockets = sockets;
+    }
+
+    insert(username, lobbyName, socket) {
+        var socketObject = {
+            socket: socket,
+            name: username,
+            lobby: lobbyName
+        }
+        this.sockets.push(socketObject)
+    }
+
+    getSocketsWhereLobbyIsEqualTo(lobbyName) {
+        var socketsGroup = []
+        for (var i = 0; i < this.sockets.length; i++) {
+            if (this.sockets[i].lobby == lobbyName) {
+                socketsGroup.push(this.sockets[i])
+            }
+        }
+        return socketsGroup;
+    }
+
+    getById(id) {
+        for (var i = 0; i < this.sockets.length; i++) {
+            if (this.sockets[i].socket.id == id) return this.sockets[i]
+        }
+    }
+
+    remove(socketId) {
+        for (var i = 0; i < this.sockets.length; i++) {
+            if (this.sockets[i].socket.id == socketId) {
+                this.sockets.splice(i, 1);
+                return;
+            }
+        }
+    }
+}
+
 var lobbiesRepository = new LobbiesRepository();
 lobbiesRepository.drop();
 var savesRepository = new SavesRepository();
+var socketRepository = new SocketRepository();
 
 io.on('connection', (socket) => {
-    var currentLobby;
     socket.on("JOIN_THE_LOBBY", (msg) => {
+        var currentLobby;
         var command = JSON.parse(msg)
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
                 if (x == null) throw "LOBBY_DOES_NOT_EXIST"
-                var socketObject = {
-                    socket: socket,
-                    name: command.name,
-                    lobby: command.lobby
-                }
-                sockets.push(socketObject)
-                currentLobby = []
-                for (var i = 0; i < sockets.length; i++) {
-                    if (sockets[i].lobby == command.lobby) {
-                        currentLobby.push(sockets[i])
-                    }
-                }
+                socketRepository.insert(command.name, command.lobby, socket)
+                currentLobby = socketRepository.getSocketsWhereLobbyIsEqualTo(command.lobby)
                 if (currentLobby.length > 2) {
-                    for (var i = sockets.length - 1; i >= 0; i--) {
-                        if (sockets[i].name == command.name && sockets[i].lobby == command.lobby) {
-                            sockets.splice(i, 1)
-                            throw "LOBBY_IS_ALREADY_FULL";
-                        }
-                    }
 
+                    throw "LOBBY_IS_ALREADY_FULL";
                 }
                 else if (currentLobby.length == 2 && currentLobby[0].name == currentLobby[1].name) {
-                    for (var i = sockets.length - 1; i >= 0; i--) {
-                        if (sockets[i].name == command.name && sockets[i].lobby == command.lobby) {
-                            sockets.splice(i, 1)
-                            throw "GIVEN_NAME_IS_ALREADY_TAKEN";
-                        }
-                    }
+                    socketRepository.remove(socket.id)
+                    throw "GIVEN_NAME_IS_ALREADY_TAKEN";
                 }
                 else {
                     var player = {
@@ -163,14 +185,12 @@ io.on('connection', (socket) => {
                     }
                     x.players.push(player)
                     return lobbiesRepository.update(x)
-
                 }
             })
             .then(x => {
                 if (x) currentLobby.forEach(theSocket => {
                     theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", JSON.stringify(x))
                 })
-
             })
             .catch(x => {
                 socket.emit(x, JSON.stringify({}))
@@ -179,15 +199,11 @@ io.on('connection', (socket) => {
 
     socket.on("CHOOSE_CIVILIZATION", (msg) => {
         var command = JSON.parse(msg)
+        var currentLobby;
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
                 if (x == null) throw "LOBBY_DOES_NOT_EXIST";
-                currentLobby = []
-                for (var i = 0; i < sockets.length; i++) {
-                    if (command.lobby == sockets[i].lobby) {
-                        currentLobby.push(sockets[i])
-                    }
-                }
+                currentLobby = socketRepository.getSocketsWhereLobbyIsEqualTo(command.lobby)
                 var isPlayerExist = false
                 for (var i = 0; i < x.players.length; i++) {
                     if (x.players[i].name == command.name) {
@@ -216,15 +232,11 @@ io.on('connection', (socket) => {
         var command = JSON.parse(msg);
         var lobby;
         var save;
+        var currentLobby;
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
                 if (x == null) throw "LOBBY_DOES_NOT_EXIST";
-                currentLobby = []
-                for (var i = 0; i < sockets.length; i++) {
-                    if (command.lobby == sockets[i].lobby) {
-                        currentLobby.push(sockets[i])
-                    }
-                }
+                currentLobby = socketRepository.getSocketsWhereLobbyIsEqualTo(command.lobby)
                 lobby = x;
                 var tiles = []
                 var mapSize = {
@@ -284,30 +296,10 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        var theSocket;
-        for (var i = 0; i < sockets.length; i++) {
-            if (sockets[i].socket.id == socket.id) {
-                theSocket = sockets[i];
-                sockets.splice(i, 1)
-                break;
-            }
-        }
-
-        currentLobby = []
-        for (var i = 0; i < sockets.length; i++) {
-            if (sockets[i].lobby == theSocket.lobby) {
-                currentLobby.push(sockets[i])
-            }
-        }
-
+        var theSocket = socketRepository.getById(socket.id);
+        socketRepository.remove(socket.id)
+        var currentLobby = socketRepository.getSocketsWhereLobbyIsEqualTo(theSocket.lobby)
         if (theSocket == null) return;
-
-        for (var i = 0; i < currentLobby.length; i++) {
-            if (currentLobby[i].socket.id == theSocket.socket.id) {
-                currentLobby.splice(i, 1)
-                break;
-            }
-        }
 
         lobbiesRepository.getSingle(theSocket.lobby)
             .then(x => {
@@ -328,27 +320,22 @@ io.on('connection', (socket) => {
                     lobbiesRepository.delete(x._id);
                 }
             })
-            .catch(x => { console.log(x) })
+            .catch(x => { })
     })
 
     socket.on("KICK_PLAYER", (msg) => {
         var command = JSON.parse(msg);
-        var kickedPlayer;
+        var currentLobby;
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
                 if (x == null) throw "LOBBY_DOES_NOT_EXIST";
 
-                currentLobby = []
-                for (var i = 0; i < sockets.length; i++) {
-                    if (command.lobby == sockets[i].lobby) {
-                        currentLobby.push(sockets[i])
-                    }
-                }
+                currentLobby = socketRepository.getSocketsWhereLobbyIsEqualTo(command.lobby)
 
                 if (command.playerName == x.players[0].name) throw "HOST_CANNOT_BE_KICKED";
-                for (var i = 0; i < sockets.length; i++) {
-                    if (sockets[i].name == command.playerName) {
-                        sockets[i].socket.disconnect();
+                for (var i = 0; i < currentLobby.length; i++) {
+                    if (currentLobby[i].name == command.playerName) {
+                        currentLobby[i].socket.disconnect();
                     }
                 }
             })
@@ -360,12 +347,7 @@ io.on('connection', (socket) => {
     socket.on("START_GAME", (msg) => {
         var command = JSON.parse(msg);
 
-        currentLobby = []
-        for (var i = 0; i < sockets.length; i++) {
-            if (command.lobby == sockets[i].lobby) {
-                currentLobby.push(sockets[i])
-            }
-        }
+        var currentLobby = socketRepository.getSocketsWhereLobbyIsEqualTo(command.lobby)
         var lobby;
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
