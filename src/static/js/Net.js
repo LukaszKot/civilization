@@ -109,4 +109,8 @@ class Net {
         this._socketClient.subscribeEvent("CIVILIZATION_NOT_SELECTED", callback)
     }
 
+    onInvalidPlayerNumber(callback) {
+        this._socketClient.subscribeEvent("INVALID_PLAYER_NUMBER", callback)
+    }
+
 }

@@ -53,4 +53,8 @@ $(document).ready(function () {
     net.onCivilizationNotSelected(() => {
         console.log("civilization not selected")
     })
+
+    net.onInvalidPlayerNumber(() => {
+        console.log("invalid player number")
+    })
 })
