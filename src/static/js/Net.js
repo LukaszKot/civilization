@@ -47,6 +47,13 @@ class Net {
         this._socketClient.publishCommand("KICK_PLAYER", payload)
     }
 
+    startGame(lobbyName) {
+        var payload = {
+            lobby: lobbyName
+        }
+        this._socketClient.publishCommand("START_GAME", payload)
+    }
+
     disconnectFromTheLobby() {
         this._socketClient.disconnect();
     }
@@ -96,6 +103,22 @@ class Net {
 
     onHostCannotBeKicked(callback) {
         this._socketClient.subscribeEvent("HOST_CANNOT_BE_KICKED", callback)
+    }
+
+    onCivilizationNotSelected(callback) {
+        this._socketClient.subscribeEvent("CIVILIZATION_NOT_SELECTED", callback)
+    }
+
+    onInvalidPlayerNumber(callback) {
+        this._socketClient.subscribeEvent("INVALID_PLAYER_NUMBER", callback)
+    }
+
+    onSaveNotSelected(callback) {
+        this._socketClient.subscribeEvent("SAVE_NOT_SELECTED", callback)
+    }
+
+    onGameStarted(callback) {
+        this._socketClient.subscribeEvent("GAME_STARTED", callback)
     }
 
 }

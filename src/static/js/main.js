@@ -49,4 +49,21 @@ $(document).ready(function () {
     net.onHostCannotBeKicked(() => {
         console.log("host cannot be kicked")
     })
+
+    net.onCivilizationNotSelected(() => {
+        console.log("civilization not selected")
+    })
+
+    net.onInvalidPlayerNumber(() => {
+        console.log("invalid player number")
+    })
+
+    net.onSaveNotSelected(() => {
+        console.log("save not selected")
+    })
+
+    net.onGameStarted((event) => {
+        console.log("game started")
+        console.log(event)
+    })
 })

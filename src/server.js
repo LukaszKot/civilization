@@ -32,6 +32,24 @@ class SavesRepository {
             })
         })
     }
+
+    getSingle(id) {
+        return new Promise((accept, reject) => {
+            this._collection.findOne({ _id: id }, (err, docs) => {
+                if (err) reject(err);
+                accept(docs)
+            })
+        })
+    }
+
+    update(save) {
+        return new Promise((accept, reject) => {
+            this._collection.update({ _id: save._id }, { $set: save }, {}, (err, numUpdated) => {
+                if (err) reject(err);
+                accept(save);
+            })
+        })
+    }
 }
 
 class LobbiesRepository {
@@ -151,7 +169,6 @@ io.on('connection', (socket) => {
             .then(x => {
                 if (x) currentLobby.forEach(theSocket => {
                     theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", JSON.stringify(x))
-
                 })
 
             })
@@ -333,6 +350,52 @@ io.on('connection', (socket) => {
                     if (sockets[i].name == command.playerName) {
                         sockets[i].socket.disconnect();
                     }
+                }
+            })
+            .catch(x => {
+                socket.emit(x, JSON.stringify({}))
+            })
+    })
+
+    socket.on("START_GAME", (msg) => {
+        var command = JSON.parse(msg);
+
+        currentLobby = []
+        for (var i = 0; i < sockets.length; i++) {
+            if (command.lobby == sockets[i].lobby) {
+                currentLobby.push(sockets[i])
+            }
+        }
+        var lobby;
+        lobbiesRepository.getSingle(command.lobby)
+            .then(x => {
+                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
+                lobby = x;
+                if (x.players.length != 2) throw "INVALID_PLAYER_NUMBER";
+
+                x.players.forEach(player => {
+                    if (player.civilization == null) {
+                        throw "CIVILIZATION_NOT_SELECTED"
+                    }
+                });
+
+                if (x.save == null) throw "SAVE_NOT_SELECTED";
+                return savesRepository.getSingle(x.save)
+            })
+            .then(x => {
+                x.players = lobby.players;
+                return savesRepository.update(x)
+            })
+            .then(x => {
+                return lobbiesRepository.delete(lobby._id)
+            })
+            .then(x => {
+                var response = {
+                    save: lobby.save
+                }
+                for (var i = 0; i < currentLobby.length; i++) {
+                    response.userName = currentLobby[i].name;
+                    currentLobby[i].socket.emit("GAME_STARTED", JSON.stringify(response))
                 }
             })
             .catch(x => {
