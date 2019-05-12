@@ -345,6 +345,9 @@ io.on('connection', (socket) => {
 
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
+
+                if (x.players.length != 2) throw "INVALID_PLAYER_NUMBER";
+
                 x.players.forEach(player => {
                     if (player.civilization == null) {
                         throw "CIVILIZATION_NOT_SELECTED"
