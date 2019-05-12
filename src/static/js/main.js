@@ -49,4 +49,8 @@ $(document).ready(function () {
     net.onHostCannotBeKicked(() => {
         console.log("host cannot be kicked")
     })
+
+    net.onCivilizationNotSelected(() => {
+        console.log("civilization not selected")
+    })
 })

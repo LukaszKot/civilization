@@ -105,4 +105,8 @@ class Net {
         this._socketClient.subscribeEvent("HOST_CANNOT_BE_KICKED", callback)
     }
 
+    onCivilizationNotSelected(callback) {
+        this._socketClient.subscribeEvent("CIVILIZATION_NOT_SELECTED", callback)
+    }
+
 }
