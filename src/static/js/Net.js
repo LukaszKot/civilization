@@ -117,4 +117,8 @@ class Net {
         this._socketClient.subscribeEvent("SAVE_NOT_SELECTED", callback)
     }
 
+    onGameStarted(callback) {
+        this._socketClient.subscribeEvent("GAME_STARTED", callback)
+    }
+
 }

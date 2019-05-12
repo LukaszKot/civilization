@@ -61,4 +61,8 @@ $(document).ready(function () {
     net.onSaveNotSelected(() => {
         console.log("save not selected")
     })
+
+    net.onGameStarted(() => {
+        console.log("game started")
+    })
 })
