@@ -355,6 +355,7 @@ io.on('connection', (socket) => {
         var lobby;
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
+                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
                 lobby = x;
                 if (x.players.length != 2) throw "INVALID_PLAYER_NUMBER";
 
