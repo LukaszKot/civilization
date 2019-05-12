@@ -360,6 +360,12 @@ io.on('connection', (socket) => {
     socket.on("START_GAME", (msg) => {
         var command = JSON.parse(msg);
 
+        currentLobby = []
+        for (var i = 0; i < sockets.length; i++) {
+            if (command.lobby == sockets[i].lobby) {
+                currentLobby.push(sockets[i])
+            }
+        }
         var lobby;
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
@@ -378,7 +384,7 @@ io.on('connection', (socket) => {
             })
             .then(x => {
                 x.players = lobby.players;
-                return savesRepository.update(save)
+                return savesRepository.update(x)
             })
             .then(x => {
                 return lobbiesRepository.delete(lobby._id)
@@ -392,7 +398,9 @@ io.on('connection', (socket) => {
                     currentLobby[i].socket.emit("GAME_STARTED", JSON.stringify(response))
                 }
             })
-            .catch(x => socket.emit(x, JSON.stringify({})))
+            .catch(x => {
+                socket.emit(x, JSON.stringify({}))
+            })
     })
 })
 
