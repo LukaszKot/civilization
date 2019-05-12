@@ -353,6 +353,8 @@ io.on('connection', (socket) => {
                         throw "CIVILIZATION_NOT_SELECTED"
                     }
                 });
+
+                if (x.save == null) throw "SAVE_NOT_SELECTED";
             })
             .catch(x => socket.emit(x, JSON.stringify({})))
     })
