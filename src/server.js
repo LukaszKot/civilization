@@ -378,6 +378,19 @@ io.on('connection', (socket) => {
             })
             .then(x => {
                 x.players = lobby.players;
+                return savesRepository.update(save)
+            })
+            .then(x => {
+                return lobbiesRepository.delete(lobby._id)
+            })
+            .then(x => {
+                var response = {
+                    save: lobby.save
+                }
+                for (var i = 0; i < currentLobby.length; i++) {
+                    response.userName = currentLobby[i].name;
+                    currentLobby[i].socket.emit("GAME_STARTED", JSON.stringify(response))
+                }
             })
             .catch(x => socket.emit(x, JSON.stringify({})))
     })
