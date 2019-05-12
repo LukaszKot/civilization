@@ -345,8 +345,13 @@ io.on('connection', (socket) => {
 
         lobbiesRepository.getSingle(command.lobby)
             .then(x => {
-
+                x.players.forEach(player => {
+                    if (player.civilization == null) {
+                        throw "CIVILIZATION_NOT_SELECTED"
+                    }
+                });
             })
+            .catch(x => socket.emit(x, JSON.stringify({})))
     })
 })
 
