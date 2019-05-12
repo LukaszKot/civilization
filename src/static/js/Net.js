@@ -113,4 +113,8 @@ class Net {
         this._socketClient.subscribeEvent("INVALID_PLAYER_NUMBER", callback)
     }
 
+    onSaveNotSelected(callback) {
+        this._socketClient.subscribeEvent("SAVE_NOT_SELECTED", callback)
+    }
+
 }

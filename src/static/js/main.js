@@ -57,4 +57,8 @@ $(document).ready(function () {
     net.onInvalidPlayerNumber(() => {
         console.log("invalid player number")
     })
+
+    net.onSaveNotSelected(() => {
+        console.log("save not selected")
+    })
 })
