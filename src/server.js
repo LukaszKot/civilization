@@ -342,6 +342,11 @@ io.on('connection', (socket) => {
 
     socket.on("START_GAME", (msg) => {
         var command = JSON.parse(msg);
+
+        lobbiesRepository.getSingle(command.lobby)
+            .then(x => {
+
+            })
     })
 })
 
