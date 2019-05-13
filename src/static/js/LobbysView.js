@@ -25,20 +25,24 @@ class LobbysView {
         this.newGameButton = $("<button>").attr("id", "newGame")
             .addClass("menuButtons")
             .html("Nowa Gra")
-        this.savedGameButton = $("<button>").attr("id", "savedGame")
-            .addClass("menuButtons")
-            .html("Wczytaj Grę")
         this.backButton = $("<button>").attr("id", "back")
             .addClass("menuButtons")
             .html("Powrót")
             .on("click", () => {
                 menuView.render()
             })
+        this.exitButton = $("<button>").attr("id", "exit")
+            .addClass("menuButtons")
+            .html("Wyjście")
+            .on("click", () => {
+                close();
+            })
+
 
         var internalMenu = $("<div>").attr("id", "internalMenu")
             .append(this.newGameButton)
-            .append(this.savedGameButton)
             .append(this.backButton)
+            .append(this.exitButton)
         this.menu.append(internalMenu);
     }
 
