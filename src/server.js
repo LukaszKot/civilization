@@ -228,8 +228,17 @@ class LobbiesService {
 
     getLobby(lobbyName) {
         return new Promise((accept, reject) => {
-
+            this._lobbiesRepository.getSingle(lobbyName)
+                .then(x => {
+                    if (x == null) throw "LOBBY_DOES_NOT_EXIST";
+                    accept(x)
+                })
         })
+    }
+
+    attachSaveToLobby(save, lobby) {
+        lobby.save = save._id;
+        return lobbiesRepository.update(lobby)
     }
 }
 
@@ -237,6 +246,52 @@ class SavesService {
     constructor(savesRepository, socketRepository) {
         this._savesRepository = savesRepository;
         this._socketRepository = socketRepository;
+    }
+
+    generateSave() {
+        var tiles = []
+        var mapSize = {
+            width: 100,
+            height: 50
+        }
+        for (var i = 0; i < 100; i++) {
+            for (var j = 0; j < 50; j++) {
+                var tile = {
+                    id: mapSize.width * j + i,
+                    position: {
+                        x: i,
+                        z: j
+                    },
+                    resources: {
+                        food: Math.floor(Math.random() * 6),
+                        gold: Math.floor(Math.random() * 6),
+                        production: Math.floor(Math.random() * 6)
+                    },
+                }
+                tiles.push(tile)
+            }
+        }
+        var save = {
+            turn: 0,
+            map: {
+                size: {
+                    width: mapSize.width,
+                    height: mapSize.height
+                },
+                tiles: tiles
+            }
+        }
+        return savesRepository.insert(save)
+    }
+}
+
+class SocketService {
+    constructor(socketRepository) {
+        this._socketRepository = socketRepository;
+    }
+
+    getSocketsWhereLobbyIsEqualTo(lobbyName) {
+        return this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
     }
 }
 
@@ -247,6 +302,7 @@ var socketRepository = new SocketRepository();
 
 var lobbiesService = new LobbiesService(lobbiesRepository, socketRepository);
 var savesService = new SavesService(savesRepository, socketRepository);
+var socketService = new SocketService(socketRepository)
 
 io.on('connection', (socket) => {
     socket.on("JOIN_THE_LOBBY", (msg) => {
@@ -264,51 +320,18 @@ io.on('connection', (socket) => {
         var lobby;
         var save;
         var currentLobby;
-        lobbiesRepository.getSingle(command.lobby)
+        lobbiesService.getLobby(command.lobby)
             .then(x => {
-                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
-                currentLobby = socketRepository.getSocketsWhereLobbyIsEqualTo(command.lobby)
+                currentLobby = socketService.getSocketsWhereLobbyIsEqualTo(command.lobby)
                 lobby = x;
-                var tiles = []
-                var mapSize = {
-                    width: 100,
-                    height: 50
-                }
-                for (var i = 0; i < 100; i++) {
-                    for (var j = 0; j < 50; j++) {
-                        var tile = {
-                            id: mapSize.width * j + i,
-                            position: {
-                                x: i,
-                                z: j
-                            },
-                            resources: {
-                                food: Math.floor(Math.random() * 6),
-                                gold: Math.floor(Math.random() * 6),
-                                production: Math.floor(Math.random() * 6)
-                            },
-                        }
-                        tiles.push(tile)
-                    }
-                }
-                var save = {
-                    turn: 0,
-                    map: {
-                        size: {
-                            width: mapSize.width,
-                            height: mapSize.height
-                        },
-                        tiles: tiles
-                    }
-                }
-                return savesRepository.insert(save)
+                return savesService.generateSave();
             })
             .then(x => {
                 save = x;
-                lobby.save = x._id;
-                return lobbiesRepository.update(lobby)
+                return lobbiesService.attachSaveToLobby(save, lobby)
             })
             .then(x => {
+                lobby = x
                 var dto = {
                     name: lobby.name,
                     players: lobby.players,
