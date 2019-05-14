@@ -2,6 +2,11 @@ class Net {
     constructor() {
         this._httpClient = new HttpClient();
         this._socketClient = new SocketClient();
+        this._userData = {}
+    }
+
+    setUsername(username) {
+        this._userData.username = username;
     }
 
     getAllLobbies() {
@@ -15,41 +20,41 @@ class Net {
         return this._httpClient.post("/api/lobbies", payload)
     }
 
-    joinTheLobby(lobbyName, username) {
+    joinTheLobby(lobbyName) {
         var payload = {
-            name: username,
+            name: this._userData.username,
             lobby: lobbyName
         }
         this._socketClient.publishCommand("JOIN_THE_LOBBY", payload)
     }
 
-    chooseCivilization(lobbyName, username, civilization) {
+    chooseCivilization(civilization) {
         var payload = {
-            lobby: lobbyName,
-            name: username,
+            lobby: this._userData.lobbyName,
+            name: this._userData.username,
             civilization: civilization
         }
         this._socketClient.publishCommand("CHOOSE_CIVILIZATION", payload)
     }
 
-    renderMap(lobbyName) {
+    renderMap() {
         var payload = {
-            lobby: lobbyName
+            lobby: this._userData.lobbyName
         }
         this._socketClient.publishCommand("RENDER_MAP", payload)
     }
 
-    kickPlayer(lobbyName, playerName) {
+    kickPlayer(playerName) {
         var payload = {
-            lobby: lobbyName,
+            lobby: this._userData.lobbyName,
             playerName: playerName
         }
         this._socketClient.publishCommand("KICK_PLAYER", payload)
     }
 
-    startGame(lobbyName) {
+    startGame() {
         var payload = {
-            lobby: lobbyName
+            lobby: this._userData.lobbyName
         }
         this._socketClient.publishCommand("START_GAME", payload)
     }
@@ -63,7 +68,10 @@ class Net {
     }
 
     onPlayerJoinedTheLobby(callback) {
-        this._socketClient.subscribeEvent("PLAYER_JOINED_THE_LOBBY", callback)
+        this._socketClient.subscribeEvent("PLAYER_JOINED_THE_LOBBY", (event) => {
+            this._userData.lobbyName = event.name
+            callback(event);
+        })
     }
 
     onGivenNameIsAlreadyTaken(callback) {
@@ -96,6 +104,7 @@ class Net {
 
     onDisconnectFromTheLobby(callback) {
         this._socketClient.subscribeEvent("disconnect", () => {
+            this._userData.lobbyName = null;
             this._socketClient.reconnect();
             callback();
         })
