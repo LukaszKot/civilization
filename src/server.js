@@ -297,9 +297,9 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         var theSocket = socketRepository.getById(socket.id);
+        if (theSocket == null) return;
         socketRepository.remove(socket.id)
         var currentLobby = socketRepository.getSocketsWhereLobbyIsEqualTo(theSocket.lobby)
-        if (theSocket == null) return;
 
         lobbiesRepository.getSingle(theSocket.lobby)
             .then(x => {
