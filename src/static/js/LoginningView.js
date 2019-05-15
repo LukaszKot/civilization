@@ -32,6 +32,7 @@ class LoginningView {
             .html("Dalej")
             .on("click", () => {
                 var playerNick = $("#nicknameField").val()
+                net.setUsername(playerNick)
                 menuView.render()
             })
         this.exitButton = $("<button>").attr("id", "exit")
