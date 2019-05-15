@@ -30,6 +30,10 @@ class LobbysView {
         this.newGameButton = $("<button>").attr("id", "newGame")
             .addClass("menuButtons")
             .html("Nowa Gra")
+            .on("click", () => {
+                var lobby = prompt("Podaj nazwę lobby:")
+                net.createLobby(lobby)
+            })
         this.backButton = $("<button>").attr("id", "back")
             .addClass("menuButtons")
             .html("Powrót")
@@ -67,8 +71,8 @@ class LobbysView {
                 })
             var nextLobby = $("<div>").addClass("nextLobby")
                 .append(this.nextLobbyId)
-                .append(this.nextLobbyButton)
                 .append(this.nextLobbyValue)
+                .append(this.nextLobbyButton)
             this.listOfLobbys
                 .append(nextLobby)
         }
