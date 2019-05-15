@@ -18,7 +18,12 @@ class LobbysView {
     _createListOfLobbys() {
         this.listOfLobbys = $("<div>").attr("id", "listOfLobbys")
         this.menu.append(this.listOfLobbys);
-        this._addingLobbys();
+        net.getAllLobbies()
+            .then(lobbies => {
+                this.lobbys = lobbies;
+                this._addingLobbys();
+            })
+
     }
 
     _createInternalMenu() {
@@ -47,17 +52,10 @@ class LobbysView {
     }
 
     _addingLobbys() {
-        this.lobbys = [
-            { name: "Pierwsze", creator: "Halpon", players: 2 },
-            { name: "Drugie", creator: "MisterCodePL", players: 2 }
-        ]
         for (var i = 0; i < this.lobbys.length; i++) {
             this.nextLobbyId = $("<div>")
                 .addClass("lobbyId")
                 .html("Nazwa:" + this.lobbys[i].name)
-            this.nextLobbyNick = $("<div>")
-                .addClass("lobbyNick")
-                .html("Twórca:" + this.lobbys[i].creator)
             this.nextLobbyValue = $("<div>")
                 .addClass("lobbyValue")
                 .html("Liczba graczy:" + this.lobbys[i].players)
@@ -69,7 +67,6 @@ class LobbysView {
                 })
             var nextLobby = $("<div>").addClass("nextLobby")
                 .append(this.nextLobbyId)
-                .append(this.nextLobbyNick)
                 .append(this.nextLobbyButton)
                 .append(this.nextLobbyValue)
             this.listOfLobbys

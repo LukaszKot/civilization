@@ -20,9 +20,6 @@ class MenuView {
             .on("click", () => {
                 lobbysView.render()
             })
-        this.tutorialButton = $("<button>").attr("id", "tutorial")
-            .addClass("mainMenuButtons")
-            .html("Samouczek")
         this.exitButton = $("<button>").attr("id", "exit")
             .addClass("mainMenuButtons")
             .html("Wyjście")
@@ -32,7 +29,6 @@ class MenuView {
 
         var mainMenu = $("<div>").attr("id", "mainMenu")
             .append(this.newGameButton)
-            .append(this.tutorialButton)
             .append(this.exitButton)
         this.menu.append(mainMenu);
     }
