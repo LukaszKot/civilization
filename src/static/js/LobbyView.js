@@ -33,7 +33,13 @@ class LobbyView {
             loginningView.render();
             alert("Gracz o takim nicku już jest w lobby!")
         })
-
+        net.onDisconnectFromTheLobby(() => {
+            lobbysView.render();
+            alert("Zostałeś wyrzucony z lobby!")
+        })
+        net.onPlayerDisconnectedFromTheLobby((event) => {
+            this._addingPlayers(event.players);
+        })
     }
 
     _createListOfPlayers() {
@@ -52,6 +58,7 @@ class LobbyView {
             .addClass("menuButtons")
             .html("Powrót")
             .on("click", () => {
+                net.disconnectFromTheLobby();
                 lobbysView.render()
             })
 
