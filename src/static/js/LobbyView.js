@@ -2,7 +2,8 @@ class LobbyView {
     constructor() {
     }
 
-    render() {
+    render(lobbyName) {
+        net.joinTheLobby(lobbyName)
         var main = $("#main")
         main.empty();
 
@@ -13,12 +14,19 @@ class LobbyView {
         main.append(this.menu)
         this._createListOfPlayers();
         this._createInternalMenu();
+        this._addEventListiners()
+    }
+
+    _addEventListiners() {
+        net.onPlayerJoinedTheLobby((event) => {
+            this._addingPlayers(event.players);
+        })
+
     }
 
     _createListOfPlayers() {
         this.listOfPlayers = $("<div>").attr("id", "listOfPlayers")
         this.menu.append(this.listOfPlayers);
-        this._addingPlayers();
     }
 
     _createInternalMenu() {
@@ -54,18 +62,17 @@ class LobbyView {
 
     }
 
-    _addingPlayers() {
-        this.players = [
-            { id: 1, nick: "Halpon" },
-            { id: 2, nick: "MisterCodePL" }
-        ]
+    _addingPlayers(players) {
+        this.players = players
+        this.listOfPlayers
+            .empty()
         for (var i = 0; i < this.players.length; i++) {
             this.nextPlayerId = $("<div>")
                 .addClass("playerId")
-                .html("Lp. " + this.players[i].id)
+                .html("Lp. " + (i + 1))
             this.nextPlayerNick = $("<div>")
                 .addClass("playerNick")
-                .html("Nick: " + this.players[i].nick)
+                .html("Nick: " + this.players[i].name)
             this.nextCivName = $("<div>")
                 .addClass("civName")
                 .html("Cywilizacja: ")

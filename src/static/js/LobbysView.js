@@ -33,6 +33,14 @@ class LobbysView {
             .on("click", () => {
                 var lobby = prompt("Podaj nazwę lobby:")
                 net.createLobby(lobby)
+                    .then(lobby => {
+                        if (lobby.event == "LOBBY_WITH_THAT_NAME_ALREADY_EXISTS") {
+                            alert("Lobby o takiej nazwie już istnieje.")
+                        }
+                        if (lobby.event == "LOBBY_CREATED") {
+                            lobbyView.render(lobby.body.name)
+                        }
+                    })
             })
         this.backButton = $("<button>").attr("id", "back")
             .addClass("menuButtons")
@@ -42,9 +50,9 @@ class LobbysView {
             })
         this.exitButton = $("<button>").attr("id", "exit")
             .addClass("menuButtons")
-            .html("Wyjście")
+            .html("Odśwież")
             .on("click", () => {
-                close();
+                this.render();
             })
 
 
@@ -56,7 +64,7 @@ class LobbysView {
     }
 
     _addingLobbys() {
-        for (var i = 0; i < this.lobbys.length; i++) {
+        for (let i = 0; i < this.lobbys.length; i++) {
             this.nextLobbyId = $("<div>")
                 .addClass("lobbyId")
                 .html("Nazwa:" + this.lobbys[i].name)
@@ -67,7 +75,7 @@ class LobbysView {
                 .addClass("lobbyButton")
                 .html("Dołącz")
                 .on("click", () => {
-                    lobbyView.render()
+                    lobbyView.render(this.lobbys[i].name)
                 })
             var nextLobby = $("<div>").addClass("nextLobby")
                 .append(this.nextLobbyId)
