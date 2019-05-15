@@ -21,6 +21,18 @@ class LobbyView {
         net.onPlayerJoinedTheLobby((event) => {
             this._addingPlayers(event.players);
         })
+        net.onLobbyDoesNotExist(() => {
+            lobbysView.render();
+            alert("Lobby nie istnieje!")
+        })
+        net.onLobbyIsAlreadyFull(() => {
+            lobbysView.render();
+            alert("Lobby jest już pełne!")
+        })
+        net.onGivenNameIsAlreadyTaken(() => {
+            loginningView.render();
+            alert("Gracz o takim nicku już jest w lobby!")
+        })
 
     }
 
