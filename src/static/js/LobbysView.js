@@ -18,13 +18,30 @@ class LobbysView {
     _createListOfLobbys() {
         this.listOfLobbys = $("<div>").attr("id", "listOfLobbys")
         this.menu.append(this.listOfLobbys);
-        this._addingLobbys();
+        net.getAllLobbies()
+            .then(lobbies => {
+                this.lobbys = lobbies;
+                this._addingLobbys();
+            })
+
     }
 
     _createInternalMenu() {
         this.newGameButton = $("<button>").attr("id", "newGame")
             .addClass("menuButtons")
             .html("Nowa Gra")
+            .on("click", () => {
+                var lobby = prompt("Podaj nazwę lobby:")
+                net.createLobby(lobby)
+                    .then(lobby => {
+                        if (lobby.event == "LOBBY_WITH_THAT_NAME_ALREADY_EXISTS") {
+                            alert("Lobby o takiej nazwie już istnieje.")
+                        }
+                        if (lobby.event == "LOBBY_CREATED") {
+                            lobbyView.render(lobby.body.name)
+                        }
+                    })
+            })
         this.backButton = $("<button>").attr("id", "back")
             .addClass("menuButtons")
             .html("Powrót")
@@ -33,9 +50,9 @@ class LobbysView {
             })
         this.exitButton = $("<button>").attr("id", "exit")
             .addClass("menuButtons")
-            .html("Wyjście")
+            .html("Odśwież")
             .on("click", () => {
-                close();
+                this.render();
             })
 
 
@@ -47,17 +64,10 @@ class LobbysView {
     }
 
     _addingLobbys() {
-        this.lobbys = [
-            { name: "Pierwsze", creator: "Halpon", players: 2 },
-            { name: "Drugie", creator: "MisterCodePL", players: 2 }
-        ]
-        for (var i = 0; i < this.lobbys.length; i++) {
+        for (let i = 0; i < this.lobbys.length; i++) {
             this.nextLobbyId = $("<div>")
                 .addClass("lobbyId")
                 .html("Nazwa:" + this.lobbys[i].name)
-            this.nextLobbyNick = $("<div>")
-                .addClass("lobbyNick")
-                .html("Twórca:" + this.lobbys[i].creator)
             this.nextLobbyValue = $("<div>")
                 .addClass("lobbyValue")
                 .html("Liczba graczy:" + this.lobbys[i].players)
@@ -65,13 +75,12 @@ class LobbysView {
                 .addClass("lobbyButton")
                 .html("Dołącz")
                 .on("click", () => {
-                    lobbyView.render()
+                    lobbyView.render(this.lobbys[i].name)
                 })
             var nextLobby = $("<div>").addClass("nextLobby")
                 .append(this.nextLobbyId)
-                .append(this.nextLobbyNick)
-                .append(this.nextLobbyButton)
                 .append(this.nextLobbyValue)
+                .append(this.nextLobbyButton)
             this.listOfLobbys
                 .append(nextLobby)
         }
