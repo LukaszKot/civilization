@@ -40,6 +40,19 @@ class LobbyView {
         net.onPlayerDisconnectedFromTheLobby((event) => {
             this._addingPlayers(event.players);
         })
+
+        net.onCivilizationChoosen((event) => {
+            for (var i = 0; i < this.selects.length; i++) {
+                var civOnServer = event.players[i].civilization
+                var toSet = civOnServer == null ? "Brak" : civOnServer
+                this.selects[i].val(toSet)
+            }
+        })
+
+        net.onCivilizationIsAlreadyChoosen(() => {
+            this.yourCivSelect.val('Brak')
+            net.chooseCivilization(null)
+        })
     }
 
     _createListOfPlayers() {
@@ -68,10 +81,23 @@ class LobbyView {
         this.menu.append(internalMenu);
     }
 
-    _creatingListOfCivs() {
-        this.civs = ["USA", "ROSJA"]
+    _creatingListOfCivs(isDisabled) {
+        this.civs = ["Brak", "USA", "ROSJA"]
         this.nextPlayerCiv = $("<select>")
             .addClass("chosingCivs")
+            .on('change', (event) => {
+                var val = $(event.currentTarget).val();
+                var civilization = val == "Brak" ? null : val;
+                net.chooseCivilization(civilization)
+            })
+        if (isDisabled) {
+            this.nextPlayerCiv
+                .attr('disabled', 'disabled')
+        }
+        else {
+            this.yourCivSelect = this.nextPlayerCiv;
+        }
+        this.selects.push(this.nextPlayerCiv);
         for (var i = 0; i < this.civs.length; i++) {
             this.addingCivs = $("<option>")
                 .html(this.civs[i])
@@ -84,6 +110,7 @@ class LobbyView {
         this.players = players
         this.listOfPlayers
             .empty()
+        this.selects = []
         for (var i = 0; i < this.players.length; i++) {
             this.nextPlayerId = $("<div>")
                 .addClass("playerId")
@@ -94,7 +121,8 @@ class LobbyView {
             this.nextCivName = $("<div>")
                 .addClass("civName")
                 .html("Cywilizacja: ")
-            this._creatingListOfCivs();
+            var isDisabled = net._userData.username != this.players[i].name
+            this._creatingListOfCivs(isDisabled);
             var nextPlayer = $("<div>").addClass("nextPlayer")
                 .append(this.nextPlayerId)
                 .append(this.nextPlayerNick)
