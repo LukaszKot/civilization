@@ -18,6 +18,7 @@ class MenuView {
             .addClass("mainMenuButtons")
             .html("Gra")
             .on("click", () => {
+                console.log("render")
                 lobbysView.render()
             })
         this.exitButton = $("<button>").attr("id", "exit")

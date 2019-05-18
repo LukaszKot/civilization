@@ -35,7 +35,7 @@ class LobbyView {
         })
         net.onDisconnectFromTheLobby(() => {
             lobbysView.render();
-            alert("Zostałeś wyrzucony z lobby!")
+            alert("Opuściłeś lobby!")
         })
         net.onPlayerDisconnectedFromTheLobby((event) => {
             this._addingPlayers(event.players);
@@ -59,7 +59,6 @@ class LobbyView {
             .html("Powrót")
             .on("click", () => {
                 net.disconnectFromTheLobby();
-                lobbysView.render()
             })
 
         var internalMenu = $("<div>").attr("id", "internalMenu")
