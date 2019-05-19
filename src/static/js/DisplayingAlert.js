@@ -33,9 +33,8 @@ class DisplayingAlert {
         displayingAlert.createAlert(LobbysViewAlertText)
         $("#alertButton")
             .on("click", () => {
-                var lobby = displayingAlert.createAlert.valueOfAlert
-                console.log(lobby)
-                /*net.createLobby(lobby)
+                var lobby = this.valueOfAlert
+                net.createLobby(lobby)
                     .then(lobby => {
                         if (lobby.event == "LOBBY_WITH_THAT_NAME_ALREADY_EXISTS") {
                             alert("Lobby o takiej nazwie już istnieje.")
@@ -43,7 +42,7 @@ class DisplayingAlert {
                         if (lobby.event == "LOBBY_CREATED") {
                             lobbyView.render(lobby.body.name)
                         }
-                    })*/
+                    })
             })
     }
 }
