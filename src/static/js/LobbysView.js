@@ -31,16 +31,7 @@ class LobbysView {
             .addClass("menuButtons")
             .html("Nowa Gra")
             .on("click", () => {
-                var lobby = prompt("Podaj nazwę lobby:")
-                net.createLobby(lobby)
-                    .then(lobby => {
-                        if (lobby.event == "LOBBY_WITH_THAT_NAME_ALREADY_EXISTS") {
-                            alert("Lobby o takiej nazwie już istnieje.")
-                        }
-                        if (lobby.event == "LOBBY_CREATED") {
-                            lobbyView.render(lobby.body.name)
-                        }
-                    })
+                displayingAlert.lobbysViewAlert();
             })
         this.backButton = $("<button>").attr("id", "back")
             .addClass("menuButtons")
