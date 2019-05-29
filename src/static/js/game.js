@@ -11,7 +11,7 @@ $(document).ready(function () {
         0.1,
         10000
     );
-    camera.position.set(0, 250, 200);
+    camera.position.set(0, 30, 20);
     camera.lookAt(scene.position);
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(0xffffff);
@@ -20,6 +20,8 @@ $(document).ready(function () {
 
     var axes = new THREE.AxesHelper(1000)
     scene.add(axes)
+    var tile = new Tile();
+    scene.add(tile)
 
 
 
