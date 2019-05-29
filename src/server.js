@@ -254,8 +254,8 @@ class SavesService {
             width: 100,
             height: 50
         }
-        for (var i = 0; i < 100; i++) {
-            for (var j = 0; j < 50; j++) {
+        for (var i = 0; i < mapSize.width; i++) {
+            for (var j = 0; j < mapSize.height; j++) {
                 var tile = {
                     id: mapSize.width * j + i,
                     position: {
