@@ -1,6 +1,7 @@
 class Tile extends THREE.Mesh {
     constructor() {
-        var geometry = new THREE.CylinderGeometry(5, 5, 1, 6);
+        var tileRadius = Settings.tileRadius
+        var geometry = new THREE.CylinderGeometry(tileRadius, tileRadius, 1, 6);
         var material = new THREE.MeshBasicMaterial({
             color: 0x00ff00
         })
