@@ -130,4 +130,8 @@ class Net {
         this._socketClient.subscribeEvent("GAME_STARTED", callback)
     }
 
+    getSave(id) {
+        return this._httpClient.get("/api/save/" + id)
+    }
+
 }

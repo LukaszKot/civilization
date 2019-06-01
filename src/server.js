@@ -478,3 +478,9 @@ app.post("/api/lobbies", function (req, res) {
             })
         })
 })
+
+app.get("/api/save/:id", async function (req, res) {
+    var id = req.params.id;
+    var save = await savesRepository.getSingle(id);
+    res.send(save);
+})

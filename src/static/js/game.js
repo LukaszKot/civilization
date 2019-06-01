@@ -3,7 +3,8 @@ var scene;
 var camera;
 var renderer;
 var windowObject = $(window);
-$(document).ready(function () {
+$(document).ready(async function () {
+    net = new Net();
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(
         45,
@@ -20,7 +21,7 @@ $(document).ready(function () {
 
     var axes = new THREE.AxesHelper(1000)
     scene.add(axes)
-    var map = new Map();
+    var map = await Map.create();
     scene.add(map.container)
 
 
