@@ -24,11 +24,6 @@ $(document).ready(async function () {
     var map = await Map.create();
     scene.add(map.container)
 
-
-
-
-
-
     function render() {
         renderer.render(scene, camera);
         requestAnimationFrame(render);
