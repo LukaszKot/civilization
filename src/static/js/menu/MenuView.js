@@ -18,14 +18,13 @@ class MenuView {
             .addClass("mainMenuButtons")
             .html("Gra")
             .on("click", () => {
-                console.log("render")
-                lobbysView.render()
+                lobbiesView.render()
             })
         this.exitButton = $("<button>").attr("id", "exit")
             .addClass("mainMenuButtons")
             .html("Wyjście")
             .on("click", () => {
-                close();
+                window.close();
             })
 
         var mainMenu = $("<div>").attr("id", "mainMenu")

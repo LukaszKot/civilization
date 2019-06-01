@@ -22,19 +22,19 @@ class LobbyView {
             this._addingPlayers(event.players);
         })
         net.onLobbyDoesNotExist(() => {
-            lobbysView.render();
+            lobbiesView.render();
             alert("Lobby nie istnieje!")
         })
         net.onLobbyIsAlreadyFull(() => {
-            lobbysView.render();
+            lobbiesView.render();
             alert("Lobby jest już pełne!")
         })
         net.onGivenNameIsAlreadyTaken(() => {
-            loginningView.render();
+            loginView.render();
             alert("Gracz o takim nicku już jest w lobby!")
         })
         net.onDisconnectFromTheLobby(() => {
-            lobbysView.render();
+            lobbiesView.render();
             alert("Opuściłeś lobby!")
         })
         net.onPlayerDisconnectedFromTheLobby((event) => {
