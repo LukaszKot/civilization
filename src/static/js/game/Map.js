@@ -18,6 +18,7 @@ class Map {
                 this.container.add(tile)
             }
         }
+        cameraController.setEndsOfMap(tileRadius * Math.sqrt(3) * (this.game.map.size.width - 1), 2 * (this.game.map.size.height - 1) * tileRadius - tileRadius / 2 * (this.game.map.size.height - 1))
     }
 
     static async create() {
