@@ -13,11 +13,6 @@ class LobbiesView {
         main.append(this.menu)
         this._createListOfLobbys();
         this._createInternalMenu();
-        var x = 10;
-        var y = 10;
-        var time = 10;
-        var date = 10;
-        this._createSaveInfo(x, y, time, date);
     }
 
     _createListOfLobbys() {
@@ -66,30 +61,6 @@ class LobbiesView {
             .append(this.backButton)
             .append(this.exitButton)
         this.menu.append(internalMenu);
-    }
-
-    _createSaveInfo(x, y, time, date) {
-        this.nameSaveInfo = $("<div>").attr("id", "nameSaveInfo")
-            .addClass("saveInfo")
-            .html("Informacje o save:")
-        this.timeInfo = $("<div>").attr("id", "time")
-            .addClass("saveInfo")
-            .html("Obecna tura : " + time)
-        this.mapInfo = $("<div>").attr("id", "map")
-            .addClass("saveInfo")
-            .html("Rozmiar mapy to : " + x + " hexów na " + y + " hexów")
-        this.br = $("<br>")
-        this.dateInfo = $("<div>").attr("id", "date")
-            .addClass("saveInfo")
-            .html("Obecna data to : " + date)
-
-        var saveInfo = $("<div>").attr("id", "saveInfo")
-            .append(this.nameSaveInfo)
-            .append(this.mapInfo)
-            .append(this.br)
-            .append(this.timeInfo)
-            .append(this.dateInfo)
-        this.menu.append(saveInfo);
     }
 
     _addingLobbys() {
