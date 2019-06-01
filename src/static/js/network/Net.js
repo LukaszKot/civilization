@@ -134,4 +134,8 @@ class Net {
         return this._httpClient.get("/api/save/" + id)
     }
 
+    getSaveBaseInfo(id) {
+        return this._httpClient.get("/api/save/" + id + "/base")
+    }
+
 }

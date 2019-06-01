@@ -484,3 +484,16 @@ app.get("/api/save/:id", async function (req, res) {
     var save = await savesRepository.getSingle(id);
     res.send(save);
 })
+
+app.get("/api/save/:id/base", async function (req, res) {
+    var id = req.params.id;
+    var save = await savesRepository.getSingle(id);
+    var dto = {
+        turn: save.turn,
+        map: {
+            size: save.map.size
+        },
+        id: save._id
+    }
+    res.send(dto);
+})
