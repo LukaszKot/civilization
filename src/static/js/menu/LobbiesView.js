@@ -1,4 +1,4 @@
-class LobbysView {
+class LobbiesView {
     constructor() {
     }
 

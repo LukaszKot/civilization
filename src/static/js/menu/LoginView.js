@@ -1,4 +1,4 @@
-class LoginningView {
+class LoginView {
     constructor() {
     }
 
@@ -40,7 +40,7 @@ class LoginningView {
             .addClass("loginningMenuButtons")
             .html("Wyjście")
             .on("click", () => {
-                close();
+                window.close();
             })
 
         var loginningMenu = $("<div>").attr("id", "mainMenu")
