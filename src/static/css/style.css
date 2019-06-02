@@ -255,3 +255,7 @@ body {
     padding: 15px;
     background-color: rgba(192, 192, 192, 0.6);
 }
+
+#alertLoadSelect {
+    margin-right: 2vw;
+}

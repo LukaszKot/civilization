@@ -45,4 +45,69 @@ class DisplayingAlert {
                     })
             })
     }
+    createTextAlert(importedTextInAlert, importedButtonInAlert) {
+        var textInAlertButton = importedButtonInAlert
+        var main = $("#main")
+        var alertText = $("<p>")
+            .attr("id", "alertText")
+            .addClass("alert")
+            .html(importedTextInAlert)
+        var alertButton = $("<button>")
+            .attr("id", "alertButton")
+            .addClass("alert")
+            .html(textInAlertButton)
+            .on("click", () => {
+                $(".alert").remove();
+            })
+        var alert = $("<div>").attr("id", "alert")
+            .addClass("alert")
+            .append(alertText)
+            .append(alertButton)
+        main.append(alert)
+    }
+
+    createMapAlert(importedTextInAlert, importedButtonInAlert) {
+        var textInAlertButton = importedButtonInAlert
+        var main = $("#main")
+        var alertText = $("<p>")
+            .attr("id", "alertText")
+            .addClass("alert")
+            .html(importedTextInAlert)
+        this.maps = ["Pierwsza", "Druga"]
+        this.nextMap = $("<select>")
+            .css("color", "black")
+            .attr("name", "alertLoadSelect")
+            .attr("id", "alertLoadSelect")
+            .addClass("alert")
+        for (var i = 0; i < this.maps.length; i++) {
+            this.addingMaps = $("<option>")
+                .html(this.maps[i])
+            this.nextMap.append(this.addingMaps)
+        }
+        var alertButtonOne = $("<button>")
+            .attr("id", "alertButton")
+            .addClass("alert")
+            .html("Wczytaj")
+            .on("click", () => {
+                //tu podepnij wczytanie mapy
+                $(".alert").remove();
+            })
+        var alertButton = $("<button>")
+            .attr("id", "alertButton")
+            .addClass("alert")
+            .html(textInAlertButton)
+            .on("click", () => {
+                //tu podepnij tworzenie mapy
+                $(".alert").remove();
+            })
+        var alert = $("<div>").attr("id", "alert")
+            .css("height", "37vh")
+            .addClass("alert")
+            .append(alertText)
+            .append(this.nextMap)
+            .append(alertButtonOne)
+            .append("<br>")
+            .append(alertButton)
+        main.append(alert)
+    }
 }
