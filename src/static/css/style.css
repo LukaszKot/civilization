@@ -259,3 +259,26 @@ body {
 #alertLoadSelect {
     margin-right: 2vw;
 }
+
+#saveInfo {
+    font-family: Courier New;
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 2px solid gold;
+    color: white;
+    margin-right: 10%;
+    width: 45%;
+    height: 12%;
+    margin-left: 10%;
+    margin-top: 2%;
+}
+
+.saveInfo {
+    display: inline-flex;
+    margin-top: 3%;
+    margin-left: 6%;
+}
+
+#date {
+    left: 15px;
+    position: relative;
+}
