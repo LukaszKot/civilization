@@ -28,19 +28,19 @@ class LobbyView {
         })
         net.onLobbyDoesNotExist(() => {
             lobbiesView.render();
-            displayingAlert.createTextAlert("Lobby nie istnieje!", "Okay")
+            myAlert.createTextAlert("Lobby nie istnieje!", "Okay")
         })
         net.onLobbyIsAlreadyFull(() => {
             lobbiesView.render();
-            displayingAlert.createTextAlert("Lobby jest już pełne!", "Okay")
+            myAlert.createTextAlert("Lobby jest już pełne!", "Okay")
         })
         net.onGivenNameIsAlreadyTaken(() => {
             loginView.render();
-            displayingAlert.createTextAlert("Gracz o takim nicku już jest w lobby!", "Okay")
+            myAlert.createTextAlert("Gracz o takim nicku już jest w lobby!", "Okay")
         })
         net.onDisconnectFromTheLobby(() => {
             lobbiesView.render();
-            displayingAlert.createTextAlert("Opuściłeś lobby!", "Okay")
+            myAlert.createTextAlert("Opuściłeś lobby!", "Okay")
         })
         net.onPlayerDisconnectedFromTheLobby((event) => {
             this._addingPlayers(event.players);
@@ -73,7 +73,7 @@ class LobbyView {
             .addClass("menuButtons")
             .html("Ustawienia")
             .on("click", () => {
-                displayingAlert.createMapAlert("Wybór mapy :", "Stwórz nową")
+                myAlert.createMapAlert("Wybór mapy :", "Stwórz nową")
             })
         this.backButton = $("<button>").attr("id", "back")
             .addClass("menuButtons")

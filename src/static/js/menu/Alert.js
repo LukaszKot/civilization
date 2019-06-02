@@ -1,4 +1,4 @@
-class DisplayingAlert {
+class Alert {
     constructor() {
     }
     createAlert(importedTextInAlert) {
@@ -28,9 +28,9 @@ class DisplayingAlert {
             .append(alertButton)
         main.append(alert)
     }
-    lobbysViewAlert(valueOfAlert) {
+    lobbysViewAlert() {
         var LobbysViewAlertText = "Podaj nazwe lobby :"
-        displayingAlert.createAlert(LobbysViewAlertText)
+        this.createAlert(LobbysViewAlertText)
         $("#alertButton")
             .on("click", () => {
                 var lobby = this.valueOfAlert
