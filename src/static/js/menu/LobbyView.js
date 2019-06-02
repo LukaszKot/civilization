@@ -61,6 +61,23 @@ class LobbyView {
         net.onMapRendered((data) => {
             this._createSaveInfo(data);
         })
+
+        net.onCivilizationNotSelected(() => {
+            myAlert.createTextAlert("Nie wybrano cywilizacji!", "Okay");
+        })
+
+        net.onInvalidPlayerNumber(() => {
+            myAlert.createTextAlert("W lobby jest nie właściwa liczba graczy!", "Okay");
+        })
+
+        net.onSaveNotSelected(() => {
+            myAlert.createTextAlert("Nie wybrano/stworzono zapisu gry!", "Okay");
+        })
+
+        net.onGameStarted((event) => {
+            document.cookie = "gameData=" + JSON.stringify(event) + "; expires=" + (new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)).toUTCString() + "; path=/;"
+            window.location.replace("/game.html")
+        })
     }
 
     _createListOfPlayers() {
@@ -72,6 +89,9 @@ class LobbyView {
         this.newGameButton = $("<button>").attr("id", "startGame")
             .addClass("menuButtons")
             .html("Start")
+            .on("click", () => {
+                net.startGame();
+            })
         this.savedGameButton = $("<button>").attr("id", "settingsButton")
             .addClass("menuButtons")
             .html("Ustawienia")

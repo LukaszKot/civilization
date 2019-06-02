@@ -22,7 +22,7 @@ class Map {
     }
 
     static async create() {
-        var map = await net.getSave("a8Pv249UK0XA52Bp");
+        var map = await net.getSave("PUE8d3mZZSFwcjRk");
         return new Map(map);
     }
 }
