@@ -228,3 +228,34 @@ body {
     height: 10px;
     padding: 10px;
 }
+
+#alert {
+    background-color: rgba(0, 0, 0, 0.85);
+    border: solid gold 2px;
+    position: absolute;
+    top: 0%;
+    margin-top: 32vh;
+    margin-bottom: 32vh;
+    margin-left: 32vw;
+    margin-right: 32vw;
+    width: 33vw;
+    height: 33vh;
+    z-index: 6;
+}
+
+.alert {
+    font-family: fantasy;
+    color: gold;
+    font-size: 40px;
+    margin-top: 5%;
+    text-align: center;
+}
+
+#alertButton {
+    padding: 15px;
+    background-color: rgba(192, 192, 192, 0.6);
+}
+
+#alertLoadSelect {
+    margin-right: 2vw;
+}
