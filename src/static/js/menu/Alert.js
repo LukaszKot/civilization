@@ -1,4 +1,4 @@
-class DisplayingAlert {
+class Alert {
     constructor() {
     }
     createAlert(importedTextInAlert) {
@@ -28,9 +28,9 @@ class DisplayingAlert {
             .append(alertButton)
         main.append(alert)
     }
-    lobbysViewAlert(valueOfAlert) {
+    lobbysViewAlert() {
         var LobbysViewAlertText = "Podaj nazwe lobby :"
-        displayingAlert.createAlert(LobbysViewAlertText)
+        this.createAlert(LobbysViewAlertText)
         $("#alertButton")
             .on("click", () => {
                 var lobby = this.valueOfAlert
@@ -89,7 +89,6 @@ class DisplayingAlert {
             .addClass("alert")
             .html("Wczytaj")
             .on("click", () => {
-                //tu podepnij wczytanie mapy
                 $(".alert").remove();
             })
         var alertButton = $("<button>")
@@ -97,7 +96,7 @@ class DisplayingAlert {
             .addClass("alert")
             .html(textInAlertButton)
             .on("click", () => {
-                //tu podepnij tworzenie mapy
+                net.renderMap();
                 $(".alert").remove();
             })
         var alert = $("<div>").attr("id", "alert")

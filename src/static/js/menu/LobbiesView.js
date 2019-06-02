@@ -31,7 +31,7 @@ class LobbiesView {
             .addClass("menuButtons")
             .html("Nowa Gra")
             .on("click", () => {
-                displayingAlert.lobbysViewAlert();
+                myAlert.lobbysViewAlert();
             })
         this.backButton = $("<button>").attr("id", "back")
             .addClass("menuButtons")

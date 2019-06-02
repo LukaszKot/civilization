@@ -6,7 +6,6 @@ class LobbyView {
         net.joinTheLobby(lobbyName)
         var main = $("#main")
         main.empty();
-
         this.menu = $("<div>").attr("id", "menu")
             .append($("<p>").attr("id", "nameOfGame").html("Civilization VII"))
             .append($("<p>").attr("id", "nameOfPlayers").addClass("names").html("Lista graczy"))
@@ -15,32 +14,32 @@ class LobbyView {
         this._createListOfPlayers();
         this._createInternalMenu();
         this._addEventListiners();
-        var x = 10;
-        var y = 10;
-        var time = 10;
-        var date = 10;
-        this._createSaveInfo(x, y, time, date);
+        this._createSaveInfo(null);
     }
 
     _addEventListiners() {
-        net.onPlayerJoinedTheLobby((event) => {
+        net.onPlayerJoinedTheLobby(async (event) => {
             this._addingPlayers(event.players);
+            if (event.save) {
+                var save = await net.getSaveBaseInfo(event.save)
+                this._createSaveInfo({ save: save });
+            }
         })
         net.onLobbyDoesNotExist(() => {
             lobbiesView.render();
-            displayingAlert.createTextAlert("Lobby nie istnieje!", "Okay")
+            myAlert.createTextAlert("Lobby nie istnieje!", "Okay")
         })
         net.onLobbyIsAlreadyFull(() => {
             lobbiesView.render();
-            displayingAlert.createTextAlert("Lobby jest już pełne!", "Okay")
+            myAlert.createTextAlert("Lobby jest już pełne!", "Okay")
         })
         net.onGivenNameIsAlreadyTaken(() => {
             loginView.render();
-            displayingAlert.createTextAlert("Gracz o takim nicku już jest w lobby!", "Okay")
+            myAlert.createTextAlert("Gracz o takim nicku już jest w lobby!", "Okay")
         })
         net.onDisconnectFromTheLobby(() => {
             lobbiesView.render();
-            displayingAlert.createTextAlert("Opuściłeś lobby!", "Okay")
+            myAlert.createTextAlert("Opuściłeś lobby!", "Okay")
         })
         net.onPlayerDisconnectedFromTheLobby((event) => {
             this._addingPlayers(event.players);
@@ -58,6 +57,10 @@ class LobbyView {
             this.yourCivSelect.val('Brak')
             net.chooseCivilization(null)
         })
+
+        net.onMapRendered((data) => {
+            this._createSaveInfo(data);
+        })
     }
 
     _createListOfPlayers() {
@@ -73,7 +76,7 @@ class LobbyView {
             .addClass("menuButtons")
             .html("Ustawienia")
             .on("click", () => {
-                displayingAlert.createMapAlert("Wybór mapy :", "Stwórz nową")
+                myAlert.createMapAlert("Wybór mapy :", "Stwórz nową")
             })
         this.backButton = $("<button>").attr("id", "back")
             .addClass("menuButtons")
@@ -89,27 +92,45 @@ class LobbyView {
         this.menu.append(internalMenu);
     }
 
-    _createSaveInfo(x, y, time, date) {
+    _createSaveInfo(saveData) {
+        $("#saveInfo").remove();
         this.nameSaveInfo = $("<div>").attr("id", "nameSaveInfo")
             .addClass("saveInfo")
-            .html("Informacje o save:")
-        this.timeInfo = $("<div>").attr("id", "time")
-            .addClass("saveInfo")
-            .html("Obecna tura : " + time)
-        this.mapInfo = $("<div>").attr("id", "map")
-            .addClass("saveInfo")
-            .html("Rozmiar mapy to : " + x + " hexów na " + y + " hexów")
-        this.br = $("<br>")
-        this.dateInfo = $("<div>").attr("id", "date")
-            .addClass("saveInfo")
-            .html("Obecna data to : " + date)
-
+            .html("Informacje o zapisie:")
         var saveInfo = $("<div>").attr("id", "saveInfo")
             .append(this.nameSaveInfo)
-            .append(this.mapInfo)
-            .append(this.br)
-            .append(this.timeInfo)
-            .append(this.dateInfo)
+        if (saveData == null) {
+            var info = $("<div>").attr("id", "nameSaveInfo")
+                .addClass("saveInfo").html("Brak zapisu");
+            saveInfo.append(info)
+        }
+        else {
+            var x = saveData.save.map.width;
+            var y = saveData.save.map.height;
+            var turn = saveData.save.turn;
+            var saveDate = new Date(saveData.save.lastUpdate);
+            var dateString = saveDate.getDate() + "/" + (saveDate.getMonth() + 1)
+                + "/" + saveDate.getFullYear() + " " + ("0" + saveDate.getHours()).slice(-2)
+                + ":" + ("0" + saveDate.getMinutes()).slice(-2)
+                + ":" + ("0" + saveDate.getSeconds()).slice(-2);
+
+            this.timeInfo = $("<div>").attr("id", "time")
+                .addClass("saveInfo")
+                .html("Obecna tura : " + turn)
+            this.mapInfo = $("<div>").attr("id", "map")
+                .addClass("saveInfo")
+                .html("Rozmiar mapy: " + x + "x" + y)
+            this.br = $("<br>")
+            this.dateInfo = $("<div>").attr("id", "date")
+                .addClass("saveInfo")
+                .html("Ostatnia zmiana: " + dateString)
+
+            saveInfo
+                .append(this.mapInfo)
+                .append(this.br)
+                .append(this.timeInfo)
+                .append(this.dateInfo)
+        }
         this.menu.append(saveInfo);
     }
 

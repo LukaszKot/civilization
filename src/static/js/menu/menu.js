@@ -3,10 +3,10 @@ var menuView;
 var lobbyView;
 var lobbiesView;
 var loginView;
-var displayingAlert;
+var myAlert;
 $(document).ready(function () {
     net = new Net();
-    displayingAlert = new DisplayingAlert();
+    myAlert = new Alert();
     menuView = new MenuView();
     lobbyView = new LobbyView();
     lobbiesView = new LobbiesView();
