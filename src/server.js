@@ -182,7 +182,8 @@ class SavesService {
                     height: mapSize.height
                 },
                 tiles: tiles
-            }
+            },
+            lastUpdate: Date.now()
         }
         return savesRepository.insert(save)
     }
@@ -240,7 +241,8 @@ io.on('connection', (socket) => {
                     players: lobby.players,
                     save: {
                         turn: save.turn,
-                        map: save.map.size
+                        map: save.map.size,
+                        lastUpdate: save.lastUpdate
                     }
                 }
                 if (x) currentLobby.forEach(theSocket => {
@@ -393,10 +395,9 @@ app.get("/api/save/:id/base", async function (req, res) {
     var save = await savesRepository.getSingle(id);
     var dto = {
         turn: save.turn,
-        map: {
-            size: save.map.size
-        },
-        id: save._id
+        map: save.map.size,
+        id: save._id,
+        lastUpdate: save.lastUpdate
     }
     res.send(dto);
 })

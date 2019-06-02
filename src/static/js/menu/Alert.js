@@ -89,7 +89,6 @@ class Alert {
             .addClass("alert")
             .html("Wczytaj")
             .on("click", () => {
-                //tu podepnij wczytanie mapy
                 $(".alert").remove();
             })
         var alertButton = $("<button>")
@@ -97,7 +96,7 @@ class Alert {
             .addClass("alert")
             .html(textInAlertButton)
             .on("click", () => {
-                //tu podepnij tworzenie mapy
+                net.renderMap();
                 $(".alert").remove();
             })
         var alert = $("<div>").attr("id", "alert")
