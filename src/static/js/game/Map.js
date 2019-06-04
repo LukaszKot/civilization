@@ -2,7 +2,6 @@ class Map {
     constructor(game) {
         if (game == null) throw new Error('Cannot be called directly');
         this.game = game;
-        console.log(this.game)
         var tileRadius = Settings.tileRadius;
         this.container = new THREE.Object3D();
         for (var i = 0; i < this.game.map.size.width; i++) {
@@ -22,7 +21,18 @@ class Map {
     }
 
     static async create() {
-        var map = await net.getSave("a8Pv249UK0XA52Bp");
+
+        var cookies = document.cookie.split("; ");
+        cookies.forEach(element => {
+            var cookie = element.split("=")
+            if (cookie[0] == "game") {
+                this.saveId = cookie[1];
+            }
+            if (cookie[0] == "username") {
+                this.username = cookie[1];
+            }
+        });
+        var map = await net.getSave(this.saveId);
         return new Map(map);
     }
 }

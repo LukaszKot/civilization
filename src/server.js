@@ -5,6 +5,8 @@ const PORT = 3000;
 
 app.use(express.static('static'))
 app.use(express.json())
+var cookieParser = require("cookie-parser")
+app.use(cookieParser())
 var path = require('path')
 
 var server = app.listen(PORT, function () {
@@ -360,4 +362,12 @@ app.get("/api/save/:id/base", async function (req, res) {
         lastUpdate: save.lastUpdate
     }
     res.send(dto);
+})
+
+app.get("/game/:id/:username", async function (req, res) {
+    var id = req.params.id;
+    var name = req.params.username;
+    res.cookie("game", id, { expires: new Date(Date.now() + 1000 * 60 * 60 * 24), httpOnly: false })
+    res.cookie("username", name, { expires: new Date(Date.now() + 1000 * 60 * 60 * 24), httpOnly: false })
+    res.sendFile(path.join(__dirname + "/static/game.html"))
 })

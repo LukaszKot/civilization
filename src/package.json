@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "*",
     "nedb": "*",
-    "socket.io": "*"
+    "socket.io": "*",
+    "cookie-parser": "*"
   }
 }

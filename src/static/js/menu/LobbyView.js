@@ -61,6 +61,10 @@ class LobbyView {
         net.onMapRendered((data) => {
             this._createSaveInfo(data);
         })
+
+        net.onGameStarted((event) => {
+            window.location.href = "/game/" + event.save + "/" + event.userName;
+        })
     }
 
     _createListOfPlayers() {
@@ -72,6 +76,9 @@ class LobbyView {
         this.newGameButton = $("<button>").attr("id", "startGame")
             .addClass("menuButtons")
             .html("Start")
+            .on("click", () => {
+                net.startGame();
+            })
         this.savedGameButton = $("<button>").attr("id", "settingsButton")
             .addClass("menuButtons")
             .html("Ustawienia")
