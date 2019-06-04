@@ -152,7 +152,7 @@ class LobbyView {
         this.menu.append(saveInfo);
     }
 
-    _creatingListOfCivs(isDisabled) {
+    _creatingListOfCivs(isDisabled, civ) {
         this.civs = ["Brak", "USA", "ROSJA"]
         this.nextPlayerCiv = $("<select>")
             .addClass("chosingCivs")
@@ -174,6 +174,7 @@ class LobbyView {
                 .html(this.civs[i])
             this.nextPlayerCiv.append(this.addingCivs)
         }
+        this.nextPlayerCiv.val(civ ? civ : "Brak")
 
     }
 
@@ -193,7 +194,7 @@ class LobbyView {
                 .addClass("civName")
                 .html("Cywilizacja: ")
             var isDisabled = net._userData.username != this.players[i].name
-            this._creatingListOfCivs(isDisabled);
+            this._creatingListOfCivs(isDisabled, this.players[i].civilization);
             var nextPlayer = $("<div>").addClass("nextPlayer")
                 .append(this.nextPlayerId)
                 .append(this.nextPlayerNick)

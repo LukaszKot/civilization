@@ -126,6 +126,7 @@ io.on('connection', (socket) => {
                 })
             })
             .catch(x => {
+                console.log(x)
                 socket.emit(x, JSON.stringify({}))
             })
     })

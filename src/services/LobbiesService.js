@@ -80,7 +80,7 @@ class LobbiesService {
 
     attachSaveToLobby(save, lobby) {
         lobby.save = save._id;
-        return lobbiesRepository.update(lobby)
+        return this._lobbiesRepository.update(lobby)
     }
 }
 
