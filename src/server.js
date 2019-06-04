@@ -116,8 +116,8 @@ class SavesService {
     generateSave() {
         var tiles = []
         var mapSize = {
-            width: 100,
-            height: 50
+            width: 25,
+            height: 12
         }
         for (var i = 0; i < mapSize.width; i++) {
             for (var j = 0; j < mapSize.height; j++) {
