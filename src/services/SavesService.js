@@ -18,11 +18,6 @@ class SavesService {
                         x: i,
                         z: j
                     },
-                    resources: {
-                        food: Math.floor(Math.random() * 6),
-                        gold: Math.floor(Math.random() * 6),
-                        production: Math.floor(Math.random() * 6)
-                    },
                 }
                 tiles.push(tile)
             }
