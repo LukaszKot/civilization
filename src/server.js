@@ -180,6 +180,26 @@ io.on('connection', (socket) => {
                         }
                     }
                 }
+
+                var reveal = (position, tiles, civName) => {
+                    tiles.forEach(tile => {
+                        if (tile.position.x == position.x && tile.position.z == position.y) {
+                            tile.seenBy.push(civName)
+                        }
+                    });
+                }
+
+                positions.forEach(position => {
+                    for (var i = -2; i < 3; i++) {
+                        for (var j = -2; j < 3; j++) {
+                            reveal({
+                                x: position.x + i,
+                                y: position.y + j
+                            }, x.map.tiles, position.player.civilization)
+                        }
+                    }
+                });
+
                 return savesRepository.update(x)
             })
             .then(x => {

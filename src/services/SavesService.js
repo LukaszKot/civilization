@@ -18,6 +18,7 @@ class SavesService {
                         x: i,
                         z: j
                     },
+                    seenBy: []
                 }
                 tiles.push(tile)
             }
