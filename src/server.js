@@ -151,6 +151,35 @@ io.on('connection', (socket) => {
             })
             .then(x => {
                 x.players = lobby.players;
+                x.turn += 1;
+                var randomisePositions = (x) => {
+                    var positions = []
+                    x.players.forEach(element => {
+                        var randomPosition = {
+                            x: Math.floor(Math.random() * x.map.size.width),
+                            y: Math.floor(Math.random() * x.map.size.height),
+                        }
+                        positions.push(randomPosition);
+                    });
+                    if (Math.sqrt(Math.pow(positions[0].x - positions[1].x, 2) + Math.pow(positions[0].y - positions[1].y, 2)) < 5) {
+                        return randomisePositions(x)
+                    }
+                    return positions;
+                }
+
+                var positions = randomisePositions(x);
+                positions[0].player = x.players[0];
+                positions[1].player = x.players[1];
+
+                for (var i = 0; i < positions.length; i++) {
+                    var pos = positions[i]
+                    for (var j = 0; j < x.map.tiles.length; j++) {
+                        if (x.map.tiles[j].position.x == pos.x && x.map.tiles[j].position.z == pos.y) {
+
+                            x.map.tiles[j].unit = { type: "Settler", owner: pos.player }
+                        }
+                    }
+                }
                 return savesRepository.update(x)
             })
             .then(x => {
@@ -166,6 +195,7 @@ io.on('connection', (socket) => {
                 }
             })
             .catch(x => {
+                console.log(x)
                 socket.emit(x, JSON.stringify({}))
             })
     })
