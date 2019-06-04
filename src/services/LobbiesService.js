@@ -4,38 +4,30 @@ class LobbiesService {
         this._socketRepository = socketRepository;
     }
 
-    joinTheLobby(lobbyName, name, socket) {
-        var currentLobby;
-        this._lobbiesRepository.getSingle(lobbyName)
-            .then(lobby => {
-                if (lobby == null) throw "LOBBY_DOES_NOT_EXIST";
-                this._socketRepository.insert(name, lobbyName, socket);
-                currentLobby = this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
-                if (currentLobby.length > 2) {
-                    this._socketRepository.remove(socket.id)
-                    throw "LOBBY_IS_ALREADY_FULL";
-                }
-                else if (currentLobby.length == 2 && currentLobby[0].name == currentLobby[1].name) {
-                    this._socketRepository.remove(socket.id)
-                    throw "GIVEN_NAME_IS_ALREADY_TAKEN";
-                }
-                else {
-                    var player = {
-                        name: name,
-                        civilization: null
-                    }
-                    lobby.players.push(player)
-                    return this._lobbiesRepository.update(lobby)
-                }
-            })
-            .then(lobby => {
-                if (lobby) currentLobby.forEach(theSocket => {
-                    theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", JSON.stringify(lobby))
-                })
-            })
-            .catch(x => {
-                socket.emit(x, JSON.stringify({}))
-            })
+    async joinTheLobby(lobbyName, name, socket) {
+        var lobby = await this._lobbiesRepository.getSingle(lobbyName)
+        if (lobby == null) throw "LOBBY_DOES_NOT_EXIST";
+        this._socketRepository.insert(name, lobbyName, socket);
+        var currentLobby = this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
+        if (currentLobby.length > 2) {
+            this._socketRepository.remove(socket.id)
+            socket.emit("LOBBY_IS_ALREADY_FULL", JSON.stringify({}))
+            return;
+        }
+        if (currentLobby.length == 2 && currentLobby[0].name == currentLobby[1].name) {
+            this._socketRepository.remove(socket.id)
+            socket.emit("GIVEN_NAME_IS_ALREADY_TAKEN", JSON.stringify({}))
+            return;
+        }
+        var player = {
+            name: name,
+            civilization: null
+        }
+        lobby.players.push(player)
+        await this._lobbiesRepository.update(lobby)
+        if (lobby) currentLobby.forEach(theSocket => {
+            theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", JSON.stringify(lobby))
+        })
     }
 
     chooseCivilization(lobbyName, name, civilization, socket) {
