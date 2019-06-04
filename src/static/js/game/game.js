@@ -14,12 +14,15 @@ $(document).ready(async function () {
         0.1,
         10000
     );
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    scene.add(directionalLight);
+
     camera.position.set(200, 50, 100);
     camera.lookAt(new THREE.Vector3(camera.position.x, camera.position.y - 50, camera.position.z - 30));
     cameraController = new CameraController(camera);
     updateSubscriber.push(cameraController);
     renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(0xffffff);
+    renderer.setClearColor(0x000000);
     renderer.setSize(windowObject.width(), windowObject.height())
     $("#root").append(renderer.domElement);
 

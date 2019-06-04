@@ -1,6 +1,6 @@
 class Settler extends THREE.Mesh {
     constructor(geometry) {
-        var modelMaterial = new THREE.MeshBasicMaterial(
+        var modelMaterial = new THREE.MeshPhongMaterial(
             {
                 map: new THREE.TextureLoader().load("/gfx/Settler.jpg"),
                 morphTargets: true
