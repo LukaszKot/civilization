@@ -21,49 +21,7 @@ var SocketRepository = require("./repositories/SocketRepository.js").SocketRepos
 
 var LobbiesService = require("./services/LobbiesService.js").LobbiesService
 
-class SavesService {
-    constructor(savesRepository, socketRepository) {
-        this._savesRepository = savesRepository;
-        this._socketRepository = socketRepository;
-    }
-
-    generateSave() {
-        var tiles = []
-        var mapSize = {
-            width: 25,
-            height: 12
-        }
-        for (var i = 0; i < mapSize.width; i++) {
-            for (var j = 0; j < mapSize.height; j++) {
-                var tile = {
-                    id: mapSize.width * j + i,
-                    position: {
-                        x: i,
-                        z: j
-                    },
-                    resources: {
-                        food: Math.floor(Math.random() * 6),
-                        gold: Math.floor(Math.random() * 6),
-                        production: Math.floor(Math.random() * 6)
-                    },
-                }
-                tiles.push(tile)
-            }
-        }
-        var save = {
-            turn: 0,
-            map: {
-                size: {
-                    width: mapSize.width,
-                    height: mapSize.height
-                },
-                tiles: tiles
-            },
-            lastUpdate: Date.now()
-        }
-        return savesRepository.insert(save)
-    }
-}
+var SavesService = require("./services/SavesService.js").SavesService;
 
 class SocketService {
     constructor(socketRepository) {
