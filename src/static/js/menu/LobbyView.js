@@ -65,6 +65,17 @@ class LobbyView {
         net.onGameStarted((event) => {
             window.location.href = "/game/" + event.save + "/" + event.userName;
         })
+        net.onCivilizationNotSelected(() => {
+            myAlert.createTextAlert("Nie wybrano cywilizacji!", "Okay");
+        })
+
+        net.onInvalidPlayerNumber(() => {
+            myAlert.createTextAlert("W lobby jest nie właściwa liczba graczy!", "Okay");
+        })
+
+        net.onSaveNotSelected(() => {
+            myAlert.createTextAlert("Nie wybrano/stworzono zapisu gry!", "Okay");
+        })
     }
 
     _createListOfPlayers() {
