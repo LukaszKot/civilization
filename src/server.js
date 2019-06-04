@@ -22,16 +22,7 @@ var SocketRepository = require("./repositories/SocketRepository.js").SocketRepos
 var LobbiesService = require("./services/LobbiesService.js").LobbiesService
 
 var SavesService = require("./services/SavesService.js").SavesService;
-
-class SocketService {
-    constructor(socketRepository) {
-        this._socketRepository = socketRepository;
-    }
-
-    getSocketsWhereLobbyIsEqualTo(lobbyName) {
-        return this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
-    }
-}
+var SocketService = require("./services/SocketService.js").SocketService;
 
 var lobbiesRepository = new LobbiesRepository();
 lobbiesRepository.drop();
