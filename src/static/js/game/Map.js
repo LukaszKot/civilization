@@ -1,19 +1,25 @@
 class Map {
-    constructor(game) {
+    constructor(game, settlerMesh) {
         if (game == null) throw new Error('Cannot be called directly');
         this.game = game;
         var tileRadius = Settings.tileRadius;
         this.container = new THREE.Object3D();
+        this.settlerMesh = settlerMesh;
 
         for (var i = 0; i < this.game.map.tiles.length; i++) {
             var tileData = this.game.map.tiles[i];
-            console.log(tileData)
             var tile = new Tile();
             if (tileData.position.z % 2 == 1) {
                 tile.position.set(tileRadius * Math.sqrt(3) * tileData.position.x + tileRadius * Math.sqrt(3) / 2, 0, 2 * tileData.position.z * tileRadius - tileRadius / 2 * tileData.position.z);
             }
             else {
                 tile.position.set(tileRadius * Math.sqrt(3) * tileData.position.x, 0, 2 * tileData.position.z * tileRadius - tileRadius / 2 * tileData.position.z);
+            }
+            if (tileData.unit != null && tileData.unit.type == "Settler") {
+                var theSettler = settlerMesh.clone();
+                theSettler.position.set(tile.position.x, tile.position.y + 2.5, tile.position.z)
+                theSettler.setOwner(tileData.unit.owner)
+                this.container.add(theSettler)
             }
             this.container.add(tile)
         }
@@ -33,6 +39,7 @@ class Map {
             }
         });
         var map = await net.getSave(this.saveId);
-        return new Map(map);
+        var settler = await Settler.load();
+        return new Map(map, settler);
     }
 }
