@@ -12,7 +12,8 @@ class Tile extends THREE.Mesh {
         this.add(edges);
         this.logicData = {
             position: null,
-            type: "Tile"
+            type: "Tile",
+            unit: null
         }
     }
 
@@ -21,5 +22,9 @@ class Tile extends THREE.Mesh {
             x: x,
             z: z
         }
+    }
+
+    setLogicPosession(unit) {
+        this.logicData.unit = unit;
     }
 }

@@ -176,7 +176,7 @@ io.on('connection', (socket) => {
                     for (var j = 0; j < x.map.tiles.length; j++) {
                         if (x.map.tiles[j].position.x == pos.x && x.map.tiles[j].position.z == pos.y) {
 
-                            x.map.tiles[j].unit = { type: "Settler", owner: pos.player }
+                            x.map.tiles[j].unit = { type: "Settler", owner: pos.player, moves: 2 }
                         }
                     }
                 }
@@ -203,6 +203,11 @@ io.on('connection', (socket) => {
     socket.on("JOIN_THE_GAME", async (msg) => {
         var command = JSON.parse(msg);
         await lobbiesService.joinTheGame(command.gameId, msg.username, socket);
+    })
+
+    socket.on("MOVE_UNIT", async (msg) => {
+        var command = JSON.parse(msg);
+        await savesService.moveUnit(command.fromPosition, command.toPosition, command.usedMoves, socket)
     })
 })
 

@@ -14,7 +14,9 @@ class Settler extends THREE.Mesh {
         this.logicData = {
             owner: null,
             position: null,
-            type: "Settler"
+            type: "Settler",
+            orders: ["move", "build"],
+            moves: 2
         }
     }
 
@@ -36,5 +38,9 @@ class Settler extends THREE.Mesh {
             x: x,
             z: z
         }
+    }
+
+    setMoves(moves) {
+        this.logicData.moves = moves;
     }
 }

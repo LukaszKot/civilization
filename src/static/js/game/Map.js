@@ -17,11 +17,13 @@ class Map {
                 tile.position.set(tileRadius * Math.sqrt(3) * tileData.position.x, 0, 2 * tileData.position.z * tileRadius - tileRadius / 2 * tileData.position.z);
             }
             tile.setLogicPosition(tileData.position.x, tileData.position.z)
+            tile.setLogicPosession(tileData.unit)
             if (tileData.unit != null && tileData.unit.type == "Settler") {
                 var theSettler = settlerMesh.clone();
                 theSettler.position.set(tile.position.x, tile.position.y + 2.5, tile.position.z)
                 theSettler.setOwner(tileData.unit.owner)
                 theSettler.setLogicPosition(tileData.position.x, tileData.position.z)
+                theSettler.setMoves(tileData.unit.moves)
                 if (theSettler.logicData.owner.name != Map.username) {
                     theSettler.material.color.setHex(0xff0000);
                 }
@@ -55,6 +57,35 @@ class Map {
         if (map.players[map.nowPlaying].name != this.username) {
             $("#lock").css("display", "block")
         }
-        return new Map(map, settler);
+        this.map = new Map(map, settler);
+        return this.map;
+    }
+
+    static executeCommand(unit, command) {
+        this.map.execCommand(unit, command)
+    }
+
+    execCommand(unit, com) {
+        command.name = com;
+        if (com == "move") {
+            command.data = {
+                rings: [],
+                tiles: [],
+                unit: unit
+            }
+            this.container.children.forEach(object => {
+                if (object.logicData != null && object.logicData.type == "Tile" &&
+                    object.position.distanceTo(unit.position) < 2 * command.data.unit.logicData.moves * Settings.tileRadius &&
+                    object.logicData.unit == null) {
+                    var ring = new Ring(new THREE.Vector3(object.position.x, object.position.y + 2.5, object.position.z))
+                    ring.material.color.setHex(0xff69b4)
+                    this.container.add(ring)
+                    command.data.rings.push(ring)
+                    command.data.tiles.push(object)
+                }
+            });
+
+
+        }
     }
 }

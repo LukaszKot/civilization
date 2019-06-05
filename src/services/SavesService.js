@@ -36,6 +36,30 @@ class SavesService {
         }
         return this._savesRepository.insert(save)
     }
+
+    async moveUnit(fromPosition, toPosition, usedMoves, socket) {
+        var theSocket = this._socketRepository.getById(socket.id);
+        var lobby = this._socketRepository.getSocketsWhereGameIsEqualTo(theSocket.saveId)
+        var save = await this._savesRepository.getSingle(theSocket.saveId);
+        var tiles = save.map.tiles;
+        var from;
+        var to;
+        tiles.forEach(tile => {
+            if (tile.position.x == fromPosition.x && tile.position.z == fromPosition.z) {
+                from = tile;
+            }
+            if (tile.position.x == toPosition.x && tile.position.z == toPosition.z) {
+                to = tile;
+            }
+        });
+        to.unit = from.unit;
+        from.unit = null;
+        to.unit.moves -= usedMoves
+        await this._savesRepository.update(save)
+        lobby.forEach(s => {
+            s.socket.emit("UNIT_MOVED", JSON.stringify({ from: from, to: to, usedMoves: usedMoves }))
+        });
+    }
 }
 
 module.exports = { SavesService }

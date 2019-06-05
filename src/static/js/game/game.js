@@ -6,6 +6,11 @@ var windowObject = $(window);
 var updateSubscriber = []
 var cameraController;
 var ring;
+var unitInfo;
+var command = {
+    name: null,
+    data: null
+}
 $(document).ready(async function () {
     net = new Net();
     scene = new THREE.Scene();
@@ -29,6 +34,7 @@ $(document).ready(async function () {
 
     var map = await Map.create();
     scene.add(map.container)
+    unitInfo = new UnitInfo();
 
     $("#root").on("mousemove", (event) => {
         var xaxis = event.clientX / windowObject.width()
@@ -61,8 +67,35 @@ $(document).ready(async function () {
     net.onPlayerJoinedTheGame(() => {
         console.log("player joined the game")
     })
-    net.onPlayerDisconnectedFromTheLobby(() => {
-        console.log("player disconnected from the game")
+
+    net.onUnitMoved((event) => {
+        var to;
+        var from;
+        var fromTile
+        map.container.children.forEach(tile => {
+            if (tile.logicData != null && tile.logicData.position.x == event.to.position.x && tile.logicData.position.z == event.to.position.z) {
+                to = tile;
+            }
+            if (tile.logicData != null && tile.logicData.position.x == event.from.position.x && tile.logicData.position.z == event.from.position.z && tile.logicData.type != "Tile") {
+                from = tile;
+            }
+            if (tile.logicData != null && tile.logicData.position.x == event.from.position.x && tile.logicData.position.z == event.from.position.z && tile.logicData.type == "Tile") {
+                fromTile = tile;
+            }
+        });
+        from.position.set(to.position.x, from.position.y, to.position.z)
+        from.logicData.position = event.to.position
+        from.logicData.moves -= event.usedMoves
+        to.logicData.unit = fromTile.logicData.unit;
+        to.logicData.unit.moves -= event.usedMoves
+        fromTile.logicData.unit = null;
+        if (command.data != null) {
+            command.data.rings.forEach(ring => {
+                map.container.remove(ring)
+            });
+        }
+        command.name = null
+        command.data = null
     })
 
     var raycaster = new THREE.Raycaster();
@@ -71,16 +104,34 @@ $(document).ready(async function () {
         mouseVector.x = (event.clientX / $(window).width()) * 2 - 1;
         mouseVector.y = -(event.clientY / $(window).height()) * 2 + 1;
         raycaster.setFromCamera(mouseVector, camera);
-        var intersects = raycaster.intersectObjects(scene.children, true);
-        if (intersects.length > 0) {
-            var intersected = intersects[0].object
-            if (intersected.logicData != null && intersected.logicData.type == "Settler" && intersected.logicData.owner.name == Map.username) {
-                if (ring) scene.remove(ring)
-                ring = new Ring(intersected.position);
-                scene.add(ring)
-                $(".unit-info").css("display", "block")
-                $(".unit-name").html(intersected.logicData.type)
+        if (command.name == null) {
+            var intersects = raycaster.intersectObjects(scene.children, true);
+            if (intersects.length > 0) {
+
+                var intersected = intersects[0].object
+                if (intersected.logicData != null && intersected.logicData.type == "Settler" && intersected.logicData.owner.name == Map.username) {
+                    if (ring) scene.remove(ring)
+                    ring = new Ring(intersected.position);
+                    scene.add(ring)
+                    unitInfo.display();
+                    unitInfo.setData(intersected)
+
+                }
             }
+        }
+        else if (command.name == "move") {
+            var intersects = raycaster.intersectObjects(command.data.tiles);
+            if (intersects.length > 0) {
+
+                var intersected = intersects[0].object
+                var usedMoves = intersected.position.distanceTo(command.data.unit.position) > 2 * Settings.tileRadius ? 2 : 1
+                var to = intersected.logicData.position;
+                var from = command.data.unit.logicData.position
+                net.moveUnit(from, to, usedMoves);
+                unitInfo.hide();
+                scene.remove(ring)
+            }
+
         }
     })
     function render() {
