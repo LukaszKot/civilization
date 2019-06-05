@@ -23,6 +23,7 @@ class Map {
                 theSettler.position.set(tile.position.x, tile.position.y + 2.5, tile.position.z)
                 theSettler.setOwner(tileData.unit.owner)
                 theSettler.setLogicPosition(tileData.position.x, tileData.position.z)
+                theSettler.setMoves(tileData.unit.moves)
                 if (theSettler.logicData.owner.name != Map.username) {
                     theSettler.material.color.setHex(0xff0000);
                 }
@@ -74,7 +75,7 @@ class Map {
             }
             this.container.children.forEach(object => {
                 if (object.logicData != null && object.logicData.type == "Tile" &&
-                    object.position.distanceTo(unit.position) < 4 * Settings.tileRadius &&
+                    object.position.distanceTo(unit.position) < 2 * command.data.unit.logicData.moves * Settings.tileRadius &&
                     object.logicData.unit == null) {
                     var ring = new Ring(new THREE.Vector3(object.position.x, object.position.y + 2.5, object.position.z))
                     ring.material.color.setHex(0xff69b4)

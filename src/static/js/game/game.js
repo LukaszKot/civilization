@@ -85,7 +85,9 @@ $(document).ready(async function () {
         });
         from.position.set(to.position.x, from.position.y, to.position.z)
         from.logicData.position = event.to.position
+        from.logicData.moves -= event.usedMoves
         to.logicData.unit = fromTile.logicData.unit;
+        to.logicData.unit.moves -= event.usedMoves
         fromTile.logicData.unit = null;
         if (command.data != null) {
             command.data.rings.forEach(ring => {
@@ -122,9 +124,10 @@ $(document).ready(async function () {
             if (intersects.length > 0) {
 
                 var intersected = intersects[0].object
+                var usedMoves = intersected.position.distanceTo(command.data.unit.position) > 2 * Settings.tileRadius ? 2 : 1
                 var to = intersected.logicData.position;
                 var from = command.data.unit.logicData.position
-                net.moveUnit(from, to);
+                net.moveUnit(from, to, usedMoves);
                 unitInfo.hide();
                 scene.remove(ring)
             }

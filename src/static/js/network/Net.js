@@ -147,8 +147,8 @@ class Net {
         this._socketClient.subscribeEvent("PLAYER_JOINED_THE_GAME", callback)
     }
 
-    moveUnit(fromPosition, toPosition) {
-        this._socketClient.publishCommand("MOVE_UNIT", { fromPosition: fromPosition, toPosition: toPosition })
+    moveUnit(fromPosition, toPosition, usedMoves) {
+        this._socketClient.publishCommand("MOVE_UNIT", { fromPosition: fromPosition, toPosition: toPosition, usedMoves: usedMoves })
     }
 
     onUnitMoved(callback) {

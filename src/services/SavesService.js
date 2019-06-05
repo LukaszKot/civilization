@@ -37,7 +37,7 @@ class SavesService {
         return this._savesRepository.insert(save)
     }
 
-    async moveUnit(fromPosition, toPosition, socket) {
+    async moveUnit(fromPosition, toPosition, usedMoves, socket) {
         var theSocket = this._socketRepository.getById(socket.id);
         var lobby = this._socketRepository.getSocketsWhereGameIsEqualTo(theSocket.saveId)
         var save = await this._savesRepository.getSingle(theSocket.saveId);
@@ -54,9 +54,10 @@ class SavesService {
         });
         to.unit = from.unit;
         from.unit = null;
+        to.unit.moves -= usedMoves
         await this._savesRepository.update(save)
         lobby.forEach(s => {
-            s.socket.emit("UNIT_MOVED", JSON.stringify({ from: from, to: to }))
+            s.socket.emit("UNIT_MOVED", JSON.stringify({ from: from, to: to, usedMoves: usedMoves }))
         });
     }
 }
