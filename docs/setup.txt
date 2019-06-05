@@ -1,0 +1,5 @@
+1. Otworzyć folder z grą w Visual Studio.
+2. Otworzyć nową konsole w folerze gry.
+3. Wpisać w konsoli "npm install"
+4. Wpisać w konsoli "node server.js"
+5. Grać!
