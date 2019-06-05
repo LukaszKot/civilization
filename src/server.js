@@ -204,6 +204,11 @@ io.on('connection', (socket) => {
         var command = JSON.parse(msg);
         await lobbiesService.joinTheGame(command.gameId, msg.username, socket);
     })
+
+    socket.on("MOVE_UNIT", async (msg) => {
+        var command = JSON.parse(msg);
+        await savesService.moveUnit(command.fromPosition, command.toPosition, socket)
+    })
 })
 
 app.get("/", function (req, res) {

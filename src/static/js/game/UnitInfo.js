@@ -12,10 +12,11 @@ class UnitInfo {
     }
 
     setData(data) {
-        $(".unit-name").html(data.type)
+        $(".unit-name").html(data.logicData.type)
         $(".commands").empty();
-        data.orders.forEach(order => {
-            $(".commands").append($("<div>").html(order).addClass(".singleCommand").on("click", () => {
+        data.logicData.orders.forEach(order => {
+            $(".commands").append($("<button>").html(order).addClass(".singleCommand").on("click", (event) => {
+                $(event.currentTarget).attr("disabled", "disabled")
                 this.executeCommand(data, order);
             }))
         });
