@@ -1,7 +1,8 @@
 class SavesService {
-    constructor(savesRepository, socketRepository) {
+    constructor(savesRepository, socketRepository, lobbiesRepository) {
         this._savesRepository = savesRepository;
         this._socketRepository = socketRepository;
+        this._lobbiesRepository = lobbiesRepository;
     }
 
     generateSave() {
@@ -59,6 +60,30 @@ class SavesService {
         lobby.forEach(s => {
             s.socket.emit("UNIT_MOVED", JSON.stringify({ from: from, to: to, usedMoves: usedMoves }))
         });
+    }
+
+    async renderMap(lobbyName, socket) {
+        var lobby = await this._lobbiesRepository.getSingle(lobbyName);
+        if (lobby == null) {
+            socket.emit("LOBBY_DOES_NOT_EXIST", "{}");
+            return;
+        }
+        var currentLobby = this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
+        var save = await this.generateSave();
+        lobby.save = save._id;
+        await this._lobbiesRepository.update(lobby)
+        var dto = {
+            name: lobby.name,
+            players: lobby.players,
+            save: {
+                turn: save.turn,
+                map: save.map.size,
+                lastUpdate: save.lastUpdate
+            }
+        }
+        currentLobby.forEach(theSocket => {
+            theSocket.socket.emit("MAP_RENDERED", JSON.stringify(dto))
+        })
     }
 }
 

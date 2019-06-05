@@ -97,11 +97,6 @@ class LobbiesService {
         if (lobby == null) throw "LOBBY_DOES_NOT_EXIST";
         return lobby;
     }
-
-    attachSaveToLobby(save, lobby) {
-        lobby.save = save._id;
-        return this._lobbiesRepository.update(lobby)
-    }
 }
 
 module.exports = { LobbiesService }
