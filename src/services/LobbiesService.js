@@ -6,7 +6,11 @@ class LobbiesService {
 
     async joinTheLobby(lobbyName, name, socket) {
         var lobby = await this._lobbiesRepository.getSingle(lobbyName)
-        if (lobby == null) throw "LOBBY_DOES_NOT_EXIST";
+        if (lobby == null) {
+            socket.emit("LOBBY_DOES_NOT_EXIST", JSON.stringify({}))
+            return;
+        }
+
         this._socketRepository.insert(name, lobbyName, socket);
         var currentLobby = this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
         if (currentLobby.length > 2) {
@@ -30,34 +34,32 @@ class LobbiesService {
         })
     }
 
-    chooseCivilization(lobbyName, name, civilization, socket) {
-        var currentLobby;
-        this._lobbiesRepository.getSingle(lobbyName)
-            .then(x => {
-                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
-                currentLobby = this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
-                var isPlayerExist = false
-                for (var i = 0; i < x.players.length; i++) {
-                    if (x.players[i].name == name) {
-                        isPlayerExist = true;
-                        x.players[i].civilization = civilization;
-                    }
-                }
-                if (!isPlayerExist) throw "PLAYER_DOES_NOT_EXIST";
-                if (x.players.length > 1 && x.players[0].civilization == x.players[1].civilization && x.players[0].civilization != null) {
-                    throw "CIVILIZATION_IS_ALREADY_CHOOSEN"
-                }
-
-                return this._lobbiesRepository.update(x)
-            })
-            .then(x => {
-                if (x) currentLobby.forEach(theSocket => {
-                    theSocket.socket.emit("CIVILIZATION_CHOOSEN", JSON.stringify(x))
-                })
-            })
-            .catch(x => {
-                socket.emit(x, JSON.stringify({}))
-            })
+    async chooseCivilization(lobbyName, name, civilization, socket) {
+        var lobby = await this._lobbiesRepository.getSingle(lobbyName)
+        if (lobby == null) {
+            socket.emit("LOBBY_DOES_NOT_EXIST", JSON.stringify({}))
+            return;
+        }
+        var currentLobby = this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
+        var isPlayerExist = false
+        for (var i = 0; i < lobby.players.length; i++) {
+            if (lobby.players[i].name == name) {
+                isPlayerExist = true;
+                lobby.players[i].civilization = civilization;
+            }
+        }
+        if (!isPlayerExist) {
+            socket.emit("PLAYER_DOES_NOT_EXIST", JSON.stringify({}))
+            return;
+        }
+        if (lobby.players.length > 1 && lobby.players[0].civilization == lobby.players[1].civilization && lobby.players[0].civilization != null) {
+            socket.emit("CIVILIZATION_IS_ALREADY_CHOOSEN", JSON.stringify({}))
+            return;
+        }
+        await this._lobbiesRepository.update(lobby)
+        currentLobby.forEach(theSocket => {
+            theSocket.socket.emit("CIVILIZATION_CHOOSEN", JSON.stringify(lobby))
+        })
     }
 
     getLobby(lobbyName) {
