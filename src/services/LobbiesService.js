@@ -62,14 +62,10 @@ class LobbiesService {
         })
     }
 
-    getLobby(lobbyName) {
-        return new Promise((accept, reject) => {
-            this._lobbiesRepository.getSingle(lobbyName)
-                .then(x => {
-                    if (x == null) throw "LOBBY_DOES_NOT_EXIST";
-                    accept(x)
-                })
-        })
+    async getLobby(lobbyName) {
+        var lobby = this._lobbiesRepository.getSingle(lobbyName)
+        if (lobby == null) throw "LOBBY_DOES_NOT_EXIST";
+        return lobby;
     }
 
     attachSaveToLobby(save, lobby) {
