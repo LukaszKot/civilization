@@ -30,7 +30,7 @@ var savesRepository = new SavesRepository();
 var socketRepository = new SocketRepository();
 
 var lobbiesService = new LobbiesService(lobbiesRepository, socketRepository, savesRepository);
-var savesService = new SavesService(savesRepository, socketRepository);
+var savesService = new SavesService(savesRepository, socketRepository, lobbiesRepository);
 var socketService = new SocketService(socketRepository)
 
 io.on('connection', (socket) => {
@@ -46,38 +46,7 @@ io.on('connection', (socket) => {
 
     socket.on("RENDER_MAP", (msg) => {
         var command = JSON.parse(msg);
-        var lobby;
-        var save;
-        var currentLobby;
-        lobbiesService.getLobby(command.lobby)
-            .then(x => {
-                currentLobby = socketService.getSocketsWhereLobbyIsEqualTo(command.lobby)
-                lobby = x;
-                return savesService.generateSave();
-            })
-            .then(x => {
-                save = x;
-                return lobbiesService.attachSaveToLobby(save, lobby)
-            })
-            .then(x => {
-                lobby = x
-                var dto = {
-                    name: lobby.name,
-                    players: lobby.players,
-                    save: {
-                        turn: save.turn,
-                        map: save.map.size,
-                        lastUpdate: save.lastUpdate
-                    }
-                }
-                if (x) currentLobby.forEach(theSocket => {
-                    theSocket.socket.emit("MAP_RENDERED", JSON.stringify(dto))
-                })
-            })
-            .catch(x => {
-                console.log(x)
-                socket.emit(x, JSON.stringify({}))
-            })
+        savesService.renderMap(command.lobby, socket)
     })
 
     socket.on('disconnect', () => {
@@ -208,6 +177,10 @@ io.on('connection', (socket) => {
     socket.on("MOVE_UNIT", async (msg) => {
         var command = JSON.parse(msg);
         await savesService.moveUnit(command.fromPosition, command.toPosition, command.usedMoves, socket)
+    })
+
+    socket.on("NEXT_TURN", async (msg) => {
+        savesService.nextTurn(socket);
     })
 })
 

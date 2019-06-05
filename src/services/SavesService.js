@@ -1,7 +1,8 @@
 class SavesService {
-    constructor(savesRepository, socketRepository) {
+    constructor(savesRepository, socketRepository, lobbiesRepository) {
         this._savesRepository = savesRepository;
         this._socketRepository = socketRepository;
+        this._lobbiesRepository = lobbiesRepository;
     }
 
     generateSave() {
@@ -58,6 +59,51 @@ class SavesService {
         await this._savesRepository.update(save)
         lobby.forEach(s => {
             s.socket.emit("UNIT_MOVED", JSON.stringify({ from: from, to: to, usedMoves: usedMoves }))
+        });
+    }
+
+    async renderMap(lobbyName, socket) {
+        var lobby = await this._lobbiesRepository.getSingle(lobbyName);
+        if (lobby == null) {
+            socket.emit("LOBBY_DOES_NOT_EXIST", "{}");
+            return;
+        }
+        var currentLobby = this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
+        var save = await this.generateSave();
+        lobby.save = save._id;
+        await this._lobbiesRepository.update(lobby)
+        var dto = {
+            name: lobby.name,
+            players: lobby.players,
+            save: {
+                turn: save.turn,
+                map: save.map.size,
+                lastUpdate: save.lastUpdate
+            }
+        }
+        currentLobby.forEach(theSocket => {
+            theSocket.socket.emit("MAP_RENDERED", JSON.stringify(dto))
+        })
+    }
+
+    async nextTurn(socket) {
+        var theSocket = this._socketRepository.getById(socket.id);
+        var currentGame = this._socketRepository.getSocketsWhereGameIsEqualTo(theSocket.saveId);
+        var save = await this._savesRepository.getSingle(theSocket.saveId);
+        if (save.nowPlaying == 0) {
+            save.nowPlaying++;
+        }
+        else {
+            save.nowPlaying--;
+            save.turn++;
+            save.map.tiles.forEach(tile => {
+                if (tile.unit)
+                    tile.unit.moves = 2
+            })
+        }
+        await this._savesRepository.update(save);
+        currentGame.forEach(element => {
+            element.socket.emit("NEXT_TURN_BEGIN", JSON.stringify(save))
         });
     }
 }

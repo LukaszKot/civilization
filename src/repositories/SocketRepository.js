@@ -35,6 +35,7 @@ class SocketRepository {
         var socketsGroup = []
         for (var i = 0; i < this.sockets.length; i++) {
             if (this.sockets[i].lobby == lobbyName) {
+
                 socketsGroup.push(this.sockets[i])
             }
         }

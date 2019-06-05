@@ -35,4 +35,22 @@ body
     text-align: center;
     font-size: 50px;
     font-weight: 700;
+    z-index: 2;
+}
+
+#next-turn
+{
+    position: absolute;
+    width: 200px;
+    height: 30px;
+    background-color: #3333ff;
+    color: white;
+    text-align: center;
+    font-size: 25px;
+    font-weight: 700;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    cursor: pointer;
+    z-index: 1;
 }

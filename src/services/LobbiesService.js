@@ -91,17 +91,6 @@ class LobbiesService {
             theSocket.socket.emit("CIVILIZATION_CHOOSEN", JSON.stringify(lobby))
         })
     }
-
-    async getLobby(lobbyName) {
-        var lobby = this._lobbiesRepository.getSingle(lobbyName)
-        if (lobby == null) throw "LOBBY_DOES_NOT_EXIST";
-        return lobby;
-    }
-
-    attachSaveToLobby(save, lobby) {
-        lobby.save = save._id;
-        return this._lobbiesRepository.update(lobby)
-    }
 }
 
 module.exports = { LobbiesService }

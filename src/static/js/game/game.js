@@ -64,6 +64,12 @@ $(document).ready(async function () {
 
     })
 
+    $("#next-turn").on("click", (event) => {
+        $("#lock").css("display", "block")
+        net.nextTurn();
+    })
+
+
     net.onPlayerJoinedTheGame(() => {
         console.log("player joined the game")
     })
@@ -96,6 +102,27 @@ $(document).ready(async function () {
         }
         command.name = null
         command.data = null
+    })
+
+    net.onNextTurnBegin((event) => {
+        map.game.turn = event.turn
+        map.game.nowPlaying = event.nowPlaying;
+        if (map.game.nowPlaying == 0) {
+            map.container.children.forEach(object => {
+                if (object.logicData && object.logicData.unit) {
+                    object.logicData.unit.moves = 2;
+                }
+                if (object.logicData && object.logicData.type == "Settler") {
+                    object.logicData.moves = 2;
+                }
+            });
+        }
+        if (map.game.players[map.game.nowPlaying].name != Map.username) {
+            $("#lock").css("display", "block")
+        }
+        else {
+            $("#lock").css("display", "none")
+        }
     })
 
     var raycaster = new THREE.Raycaster();
