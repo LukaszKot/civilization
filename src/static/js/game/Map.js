@@ -52,6 +52,9 @@ class Map {
         var map = await net.getSave(this.saveId);
         var settler = await Settler.load();
         net.joinTheGame(this.saveId, this.username);
+        if (map.players[map.nowPlaying].name != this.username) {
+            $("#lock").css("display", "block")
+        }
         return new Map(map, settler);
     }
 }

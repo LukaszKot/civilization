@@ -23,3 +23,16 @@ body
     color: white;
     font-size: 40px;
 }
+
+#lock
+{
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(100,100,100,0.3);
+    color: white;
+    text-align: center;
+    font-size: 50px;
+    font-weight: 700;
+}

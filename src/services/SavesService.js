@@ -24,6 +24,7 @@ class SavesService {
         }
         var save = {
             turn: 0,
+            nowPlaying: 0,
             map: {
                 size: {
                     width: mapSize.width,
