@@ -5,6 +5,8 @@ const PORT = 3000;
 
 app.use(express.static('static'))
 app.use(express.json())
+var cookieParser = require("cookie-parser")
+app.use(cookieParser())
 var path = require('path')
 
 var server = app.listen(PORT, function () {
@@ -17,154 +19,17 @@ var SavesRepository = require("./repositories/SavesRepository.js").SavesReposito
 var LobbiesRepository = require("./repositories/LobbiesRepository.js").LobbiesRepository
 var SocketRepository = require("./repositories/SocketRepository.js").SocketRepository
 
+var LobbiesService = require("./services/LobbiesService.js").LobbiesService
 
-
-class LobbiesService {
-    constructor(lobbiesRepository, socketRepository) {
-        this._lobbiesRepository = lobbiesRepository;
-        this._socketRepository = socketRepository;
-    }
-
-    joinTheLobby(lobbyName, name, socket) {
-        var currentLobby;
-        this._lobbiesRepository.getSingle(lobbyName)
-            .then(lobby => {
-                if (lobby == null) throw "LOBBY_DOES_NOT_EXIST";
-                this._socketRepository.insert(name, lobbyName, socket);
-                currentLobby = this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
-                if (currentLobby.length > 2) {
-                    this._socketRepository.remove(socket.id)
-                    throw "LOBBY_IS_ALREADY_FULL";
-                }
-                else if (currentLobby.length == 2 && currentLobby[0].name == currentLobby[1].name) {
-                    this._socketRepository.remove(socket.id)
-                    throw "GIVEN_NAME_IS_ALREADY_TAKEN";
-                }
-                else {
-                    var player = {
-                        name: name,
-                        civilization: null
-                    }
-                    lobby.players.push(player)
-                    return this._lobbiesRepository.update(lobby)
-                }
-            })
-            .then(lobby => {
-                if (lobby) currentLobby.forEach(theSocket => {
-                    theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", JSON.stringify(lobby))
-                })
-            })
-            .catch(x => {
-                socket.emit(x, JSON.stringify({}))
-            })
-    }
-
-    chooseCivilization(lobbyName, name, civilization, socket) {
-        var currentLobby;
-        this._lobbiesRepository.getSingle(lobbyName)
-            .then(x => {
-                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
-                currentLobby = this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
-                var isPlayerExist = false
-                for (var i = 0; i < x.players.length; i++) {
-                    if (x.players[i].name == name) {
-                        isPlayerExist = true;
-                        x.players[i].civilization = civilization;
-                    }
-                }
-                if (!isPlayerExist) throw "PLAYER_DOES_NOT_EXIST";
-                if (x.players.length > 1 && x.players[0].civilization == x.players[1].civilization && x.players[0].civilization != null) {
-                    throw "CIVILIZATION_IS_ALREADY_CHOOSEN"
-                }
-
-                return this._lobbiesRepository.update(x)
-            })
-            .then(x => {
-                if (x) currentLobby.forEach(theSocket => {
-                    theSocket.socket.emit("CIVILIZATION_CHOOSEN", JSON.stringify(x))
-                })
-            })
-            .catch(x => {
-                socket.emit(x, JSON.stringify({}))
-            })
-    }
-
-    getLobby(lobbyName) {
-        return new Promise((accept, reject) => {
-            this._lobbiesRepository.getSingle(lobbyName)
-                .then(x => {
-                    if (x == null) throw "LOBBY_DOES_NOT_EXIST";
-                    accept(x)
-                })
-        })
-    }
-
-    attachSaveToLobby(save, lobby) {
-        lobby.save = save._id;
-        return lobbiesRepository.update(lobby)
-    }
-}
-
-class SavesService {
-    constructor(savesRepository, socketRepository) {
-        this._savesRepository = savesRepository;
-        this._socketRepository = socketRepository;
-    }
-
-    generateSave() {
-        var tiles = []
-        var mapSize = {
-            width: 100,
-            height: 50
-        }
-        for (var i = 0; i < mapSize.width; i++) {
-            for (var j = 0; j < mapSize.height; j++) {
-                var tile = {
-                    id: mapSize.width * j + i,
-                    position: {
-                        x: i,
-                        z: j
-                    },
-                    resources: {
-                        food: Math.floor(Math.random() * 6),
-                        gold: Math.floor(Math.random() * 6),
-                        production: Math.floor(Math.random() * 6)
-                    },
-                }
-                tiles.push(tile)
-            }
-        }
-        var save = {
-            turn: 0,
-            map: {
-                size: {
-                    width: mapSize.width,
-                    height: mapSize.height
-                },
-                tiles: tiles
-            },
-            lastUpdate: Date.now()
-        }
-        return savesRepository.insert(save)
-    }
-}
-
-class SocketService {
-    constructor(socketRepository) {
-        this._socketRepository = socketRepository;
-    }
-
-    getSocketsWhereLobbyIsEqualTo(lobbyName) {
-        return this._socketRepository.getSocketsWhereLobbyIsEqualTo(lobbyName)
-    }
-}
+var SavesService = require("./services/SavesService.js").SavesService;
+var SocketService = require("./services/SocketService.js").SocketService;
 
 var lobbiesRepository = new LobbiesRepository();
 lobbiesRepository.drop();
 var savesRepository = new SavesRepository();
 var socketRepository = new SocketRepository();
 
-var lobbiesService = new LobbiesService(lobbiesRepository, socketRepository);
+var lobbiesService = new LobbiesService(lobbiesRepository, socketRepository, savesRepository);
 var savesService = new SavesService(savesRepository, socketRepository);
 var socketService = new SocketService(socketRepository)
 
@@ -210,6 +75,7 @@ io.on('connection', (socket) => {
                 })
             })
             .catch(x => {
+                console.log(x)
                 socket.emit(x, JSON.stringify({}))
             })
     })
@@ -285,6 +151,35 @@ io.on('connection', (socket) => {
             })
             .then(x => {
                 x.players = lobby.players;
+                x.turn += 1;
+                var randomisePositions = (x) => {
+                    var positions = []
+                    x.players.forEach(element => {
+                        var randomPosition = {
+                            x: Math.floor(Math.random() * x.map.size.width),
+                            y: Math.floor(Math.random() * x.map.size.height),
+                        }
+                        positions.push(randomPosition);
+                    });
+                    if (Math.sqrt(Math.pow(positions[0].x - positions[1].x, 2) + Math.pow(positions[0].y - positions[1].y, 2)) < 5) {
+                        return randomisePositions(x)
+                    }
+                    return positions;
+                }
+
+                var positions = randomisePositions(x);
+                positions[0].player = x.players[0];
+                positions[1].player = x.players[1];
+
+                for (var i = 0; i < positions.length; i++) {
+                    var pos = positions[i]
+                    for (var j = 0; j < x.map.tiles.length; j++) {
+                        if (x.map.tiles[j].position.x == pos.x && x.map.tiles[j].position.z == pos.y) {
+
+                            x.map.tiles[j].unit = { type: "Settler", owner: pos.player }
+                        }
+                    }
+                }
                 return savesRepository.update(x)
             })
             .then(x => {
@@ -300,8 +195,14 @@ io.on('connection', (socket) => {
                 }
             })
             .catch(x => {
+                console.log(x)
                 socket.emit(x, JSON.stringify({}))
             })
+    })
+
+    socket.on("JOIN_THE_GAME", async (msg) => {
+        var command = JSON.parse(msg);
+        await lobbiesService.joinTheGame(command.gameId, msg.username, socket);
     })
 })
 
@@ -360,4 +261,12 @@ app.get("/api/save/:id/base", async function (req, res) {
         lastUpdate: save.lastUpdate
     }
     res.send(dto);
+})
+
+app.get("/game/:id/:username", async function (req, res) {
+    var id = req.params.id;
+    var name = req.params.username;
+    res.cookie("game", id, { expires: new Date(Date.now() + 1000 * 60 * 60 * 24), httpOnly: false })
+    res.cookie("username", name, { expires: new Date(Date.now() + 1000 * 60 * 60 * 24), httpOnly: false })
+    res.sendFile(path.join(__dirname + "/static/game.html"))
 })

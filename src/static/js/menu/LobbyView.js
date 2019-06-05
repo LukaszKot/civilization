@@ -61,6 +61,21 @@ class LobbyView {
         net.onMapRendered((data) => {
             this._createSaveInfo(data);
         })
+
+        net.onGameStarted((event) => {
+            window.location.href = "/game/" + event.save + "/" + event.userName;
+        })
+        net.onCivilizationNotSelected(() => {
+            myAlert.createTextAlert("Nie wybrano cywilizacji!", "Okay");
+        })
+
+        net.onInvalidPlayerNumber(() => {
+            myAlert.createTextAlert("W lobby jest nie właściwa liczba graczy!", "Okay");
+        })
+
+        net.onSaveNotSelected(() => {
+            myAlert.createTextAlert("Nie wybrano/stworzono zapisu gry!", "Okay");
+        })
     }
 
     _createListOfPlayers() {
@@ -72,6 +87,9 @@ class LobbyView {
         this.newGameButton = $("<button>").attr("id", "startGame")
             .addClass("menuButtons")
             .html("Start")
+            .on("click", () => {
+                net.startGame();
+            })
         this.savedGameButton = $("<button>").attr("id", "settingsButton")
             .addClass("menuButtons")
             .html("Ustawienia")
@@ -134,7 +152,7 @@ class LobbyView {
         this.menu.append(saveInfo);
     }
 
-    _creatingListOfCivs(isDisabled) {
+    _creatingListOfCivs(isDisabled, civ) {
         this.civs = ["Brak", "USA", "ROSJA"]
         this.nextPlayerCiv = $("<select>")
             .addClass("chosingCivs")
@@ -156,6 +174,7 @@ class LobbyView {
                 .html(this.civs[i])
             this.nextPlayerCiv.append(this.addingCivs)
         }
+        this.nextPlayerCiv.val(civ ? civ : "Brak")
 
     }
 
@@ -175,7 +194,7 @@ class LobbyView {
                 .addClass("civName")
                 .html("Cywilizacja: ")
             var isDisabled = net._userData.username != this.players[i].name
-            this._creatingListOfCivs(isDisabled);
+            this._creatingListOfCivs(isDisabled, this.players[i].civilization);
             var nextPlayer = $("<div>").addClass("nextPlayer")
                 .append(this.nextPlayerId)
                 .append(this.nextPlayerNick)

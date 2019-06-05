@@ -3,6 +3,25 @@ class SocketRepository {
         this.sockets = [];
     }
 
+    insertIntoGame(username, gameId, socket) {
+        var socketObject = {
+            socket: socket,
+            name: username,
+            saveId: gameId
+        }
+        this.sockets.push(socketObject)
+    }
+
+    getSocketsWhereGameIsEqualTo(id) {
+        var socketsGroup = []
+        for (var i = 0; i < this.sockets.length; i++) {
+            if (this.sockets[i].saveId == id) {
+                socketsGroup.push(this.sockets[i])
+            }
+        }
+        return socketsGroup;
+    }
+
     insert(username, lobbyName, socket) {
         var socketObject = {
             socket: socket,

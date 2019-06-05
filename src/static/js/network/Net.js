@@ -138,4 +138,13 @@ class Net {
         return this._httpClient.get("/api/save/" + id + "/base")
     }
 
+    joinTheGame(gameId, username) {
+        this.setUsername(username)
+        this._socketClient.publishCommand("JOIN_THE_GAME", { gameId: gameId, username: username })
+    }
+
+    onPlayerJoinedTheGame(callback) {
+        this._socketClient.subscribeEvent("PLAYER_JOINED_THE_GAME", callback)
+    }
+
 }

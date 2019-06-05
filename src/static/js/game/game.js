@@ -5,6 +5,7 @@ var renderer;
 var windowObject = $(window);
 var updateSubscriber = []
 var cameraController;
+var ring;
 $(document).ready(async function () {
     net = new Net();
     scene = new THREE.Scene();
@@ -14,17 +15,18 @@ $(document).ready(async function () {
         0.1,
         10000
     );
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    scene.add(directionalLight);
+
     camera.position.set(200, 50, 100);
     camera.lookAt(new THREE.Vector3(camera.position.x, camera.position.y - 50, camera.position.z - 30));
     cameraController = new CameraController(camera);
     updateSubscriber.push(cameraController);
     renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(0xffffff);
+    renderer.setClearColor(0x000000);
     renderer.setSize(windowObject.width(), windowObject.height())
     $("#root").append(renderer.domElement);
 
-    var axes = new THREE.AxesHelper(1000)
-    scene.add(axes)
     var map = await Map.create();
     scene.add(map.container)
 
@@ -56,6 +58,31 @@ $(document).ready(async function () {
 
     })
 
+    net.onPlayerJoinedTheGame(() => {
+        console.log("player joined the game")
+    })
+    net.onPlayerDisconnectedFromTheLobby(() => {
+        console.log("player disconnected from the game")
+    })
+
+    var raycaster = new THREE.Raycaster();
+    var mouseVector = new THREE.Vector2()
+    $("#root").on("mousedown", (event) => {
+        mouseVector.x = (event.clientX / $(window).width()) * 2 - 1;
+        mouseVector.y = -(event.clientY / $(window).height()) * 2 + 1;
+        raycaster.setFromCamera(mouseVector, camera);
+        var intersects = raycaster.intersectObjects(scene.children, true);
+        if (intersects.length > 0) {
+            var intersected = intersects[0].object
+            if (intersected.logicData != null && intersected.logicData.type == "Settler" && intersected.logicData.owner.name == Map.username) {
+                if (ring) scene.remove(ring)
+                ring = new Ring(intersected.position);
+                scene.add(ring)
+                $(".unit-info").css("display", "block")
+                $(".unit-name").html(intersected.logicData.type)
+            }
+        }
+    })
     function render() {
         for (var i = 0; i < updateSubscriber.length; i++) {
             updateSubscriber[i].update();
