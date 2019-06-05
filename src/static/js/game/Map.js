@@ -84,8 +84,10 @@ class Map {
                     command.data.tiles.push(object)
                 }
             });
-
-
+        }
+        else if (com == "build" && unit.logicData.moves > 0) {
+            net.buildCity(unit.logicData.position)
+            command.name == null
         }
     }
 }

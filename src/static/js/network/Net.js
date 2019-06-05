@@ -163,4 +163,12 @@ class Net {
         this._socketClient.subscribeEvent("NEXT_TURN_BEGIN", callback);
     }
 
+    buildCity(position) {
+        this._socketClient.publishCommand("BUILD_CITY", { position: position })
+    }
+
+    onCityBuilded(callback) {
+        this._socketClient.subscribeEvent("CITY_BUILDED", callback);
+    }
+
 }

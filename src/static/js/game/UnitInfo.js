@@ -16,8 +16,11 @@ class UnitInfo {
         $(".commands").empty();
         data.logicData.orders.forEach(order => {
             $(".commands").append($("<button>").html(order).addClass(".singleCommand").on("click", (event) => {
-                if (data.logicData.moves == 0 && order == "move") return;
-                $(event.currentTarget).attr("disabled", "disabled")
+                if (data.logicData.moves == 0) return;
+                if (order == "move")
+                    $(event.currentTarget).attr("disabled", "disabled")
+                if (order == "build")
+                    this.hide();
                 this.executeCommand(data, order);
             }))
         });

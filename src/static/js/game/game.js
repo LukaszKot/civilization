@@ -125,6 +125,15 @@ $(document).ready(async function () {
         }
     })
 
+    net.onCityBuilded((event) => {
+        map.container.children.forEach(object => {
+            if (object.logicData && object.logicData.position.x == event.tile.position.x && object.logicData.position.z == event.tile.position.z && object.logicData.type == "Settler") {
+                map.container.remove(object);
+                scene.remove(ring);
+            }
+        });
+    })
+
     var raycaster = new THREE.Raycaster();
     var mouseVector = new THREE.Vector2()
     $("#root").on("mousedown", (event) => {

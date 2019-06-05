@@ -106,6 +106,29 @@ class SavesService {
             element.socket.emit("NEXT_TURN_BEGIN", JSON.stringify(save))
         });
     }
+
+    async buildCity(socket, position) {
+        var theSocket = this._socketRepository.getById(socket.id);
+        var currentGame = this._socketRepository.getSocketsWhereGameIsEqualTo(theSocket.saveId);
+        var save = await this._savesRepository.getSingle(theSocket.saveId);
+        var theTile;
+        save.map.tiles.forEach(tile => {
+            if (tile.position.x == position.x && tile.position.z == position.z) {
+                theTile = tile;
+            }
+        });
+        var owner = theTile.unit.owner;
+        theTile.unit = null;
+        theTile.city = {
+            production: null,
+            turnToTheEnd: null,
+            owner: owner
+        }
+        await this._savesRepository.update(save)
+        currentGame.forEach(s => {
+            s.socket.emit("CITY_BUILDED", JSON.stringify({ tile: theTile }))
+        });
+    }
 }
 
 module.exports = { SavesService }

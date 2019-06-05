@@ -182,6 +182,11 @@ io.on('connection', (socket) => {
     socket.on("NEXT_TURN", async (msg) => {
         savesService.nextTurn(socket);
     })
+
+    socket.on("BUILD_CITY", async (msg) => {
+        var command = JSON.parse(msg);
+        savesService.buildCity(socket, command.position)
+    })
 })
 
 app.get("/", function (req, res) {
