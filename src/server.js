@@ -29,7 +29,7 @@ lobbiesRepository.drop();
 var savesRepository = new SavesRepository();
 var socketRepository = new SocketRepository();
 
-var lobbiesService = new LobbiesService(lobbiesRepository, socketRepository);
+var lobbiesService = new LobbiesService(lobbiesRepository, socketRepository, savesRepository);
 var savesService = new SavesService(savesRepository, socketRepository);
 var socketService = new SocketService(socketRepository)
 
@@ -198,6 +198,11 @@ io.on('connection', (socket) => {
                 console.log(x)
                 socket.emit(x, JSON.stringify({}))
             })
+    })
+
+    socket.on("JOIN_THE_GAME", async (msg) => {
+        var command = JSON.parse(msg);
+        await lobbiesService.joinTheGame(command.gameId, msg.username, socket);
     })
 })
 

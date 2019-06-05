@@ -51,6 +51,7 @@ class Map {
         });
         var map = await net.getSave(this.saveId);
         var settler = await Settler.load();
+        net.joinTheGame(this.saveId, this.username);
         return new Map(map, settler);
     }
 }

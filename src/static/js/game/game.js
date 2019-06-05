@@ -58,6 +58,13 @@ $(document).ready(async function () {
 
     })
 
+    net.onPlayerJoinedTheGame(() => {
+        console.log("player joined the game")
+    })
+    net.onPlayerDisconnectedFromTheLobby(() => {
+        console.log("player disconnected from the game")
+    })
+
     var raycaster = new THREE.Raycaster();
     var mouseVector = new THREE.Vector2()
     $("#root").on("mousedown", (event) => {

@@ -1,7 +1,8 @@
 class LobbiesService {
-    constructor(lobbiesRepository, socketRepository) {
+    constructor(lobbiesRepository, socketRepository, savesRepository) {
         this._lobbiesRepository = lobbiesRepository;
         this._socketRepository = socketRepository;
+        this._savesRepository = savesRepository;
     }
 
     async joinTheLobby(lobbyName, name, socket) {
@@ -32,6 +33,35 @@ class LobbiesService {
         if (lobby) currentLobby.forEach(theSocket => {
             theSocket.socket.emit("PLAYER_JOINED_THE_LOBBY", JSON.stringify(lobby))
         })
+    }
+
+    async joinTheGame(saveId, name, socket) {
+        var save = await this._savesRepository.getSingle(saveId);
+        if (save == null) {
+            socket.emit("GAME_DOES_NOT_EXISTS", JSON.stringify({}))
+        }
+
+        var isUsernameOk = false;
+        save.players.forEach(player => {
+            if (player.name == name) {
+                isUsernameOk = true;
+            }
+        });
+
+        if (!isUsernameOk) {
+            socket.emit("INVALID_PLAYER", JSON.stringify({}))
+        }
+
+        var currentGame = this._socketRepository.getSocketsWhereGameIsEqualTo(saveId);
+        if (currentGame.length >= 2) {
+            socket.emit("GAME_IS_FULL", JSON.stringify({}))
+        }
+        this._socketRepository.insertIntoGame(name, saveId, socket);
+        currentGame = this._socketRepository.getSocketsWhereGameIsEqualTo(saveId);
+        currentGame.forEach(s => {
+            s.socket.emit("PLAYER_JOINED_THE_GAME", JSON.stringify({}))
+        });
+
     }
 
     async chooseCivilization(lobbyName, name, civilization, socket) {
