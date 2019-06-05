@@ -85,6 +85,27 @@ class SavesService {
             theSocket.socket.emit("MAP_RENDERED", JSON.stringify(dto))
         })
     }
+
+    async nextTurn(socket) {
+        var theSocket = this._socketRepository.getById(socket.id);
+        var currentGame = this._socketRepository.getSocketsWhereGameIsEqualTo(theSocket.saveId);
+        var save = await this._savesRepository.getSingle(theSocket.saveId);
+        if (save.nowPlaying == 0) {
+            save.nowPlaying++;
+        }
+        else {
+            save.nowPlaying--;
+            save.turn++;
+            save.map.tiles.forEach(tile => {
+                if (tile.unit)
+                    tile.unit.moves = 2
+            })
+        }
+        await this._savesRepository.update(save);
+        currentGame.forEach(element => {
+            element.socket.emit("NEXT_TURN_BEGIN", JSON.stringify(save))
+        });
+    }
 }
 
 module.exports = { SavesService }

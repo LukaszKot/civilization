@@ -178,6 +178,10 @@ io.on('connection', (socket) => {
         var command = JSON.parse(msg);
         await savesService.moveUnit(command.fromPosition, command.toPosition, command.usedMoves, socket)
     })
+
+    socket.on("NEXT_TURN", async (msg) => {
+        savesService.nextTurn(socket);
+    })
 })
 
 app.get("/", function (req, res) {

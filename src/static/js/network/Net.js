@@ -155,4 +155,12 @@ class Net {
         this._socketClient.subscribeEvent("UNIT_MOVED", callback)
     }
 
+    nextTurn() {
+        this._socketClient.publishCommand("NEXT_TURN", {})
+    }
+
+    onNextTurnBegin(callback) {
+        this._socketClient.subscribeEvent("NEXT_TURN_BEGIN", callback);
+    }
+
 }
