@@ -10,5 +10,16 @@ class Tile extends THREE.Mesh {
         var edgesMaterial = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 100 });
         var edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
         this.add(edges);
+        this.logicData = {
+            position: null,
+            type: "Tile"
+        }
+    }
+
+    setLogicPosition(x, z) {
+        this.logicData.position = {
+            x: x,
+            z: z
+        }
     }
 }

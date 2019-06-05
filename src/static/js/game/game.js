@@ -5,6 +5,7 @@ var renderer;
 var windowObject = $(window);
 var updateSubscriber = []
 var cameraController;
+var ring;
 $(document).ready(async function () {
     net = new Net();
     scene = new THREE.Scene();
@@ -57,6 +58,24 @@ $(document).ready(async function () {
 
     })
 
+    var raycaster = new THREE.Raycaster();
+    var mouseVector = new THREE.Vector2()
+    $("#root").on("mousedown", (event) => {
+        mouseVector.x = (event.clientX / $(window).width()) * 2 - 1;
+        mouseVector.y = -(event.clientY / $(window).height()) * 2 + 1;
+        raycaster.setFromCamera(mouseVector, camera);
+        var intersects = raycaster.intersectObjects(scene.children, true);
+        if (intersects.length > 0) {
+            var intersected = intersects[0].object
+            if (intersected.logicData != null && intersected.logicData.type == "Settler" && intersected.logicData.owner.name == Map.username) {
+                if (ring) scene.remove(ring)
+                ring = new Ring(intersected.position);
+                scene.add(ring)
+                $(".unit-info").css("display", "block")
+                $(".unit-name").html(intersected.logicData.type)
+            }
+        }
+    })
     function render() {
         for (var i = 0; i < updateSubscriber.length; i++) {
             updateSubscriber[i].update();

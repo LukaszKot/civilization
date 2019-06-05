@@ -12,12 +12,13 @@ class Settler extends THREE.Mesh {
         this.rotation.y = Math.PI / 2 * 3 / 2
         this.name = "Settler"
         this.logicData = {
-            owner: null
+            owner: null,
+            position: null,
+            type: "Settler"
         }
     }
 
     static async load() {
-
         return new Promise((resolve) => {
             var loader = new THREE.JSONLoader();
             loader.load('/models/settler.json', (geometry) => {
@@ -28,5 +29,12 @@ class Settler extends THREE.Mesh {
 
     setOwner(owner) {
         this.logicData.owner = owner;
+    }
+
+    setLogicPosition(x, z) {
+        this.logicData.position = {
+            x: x,
+            z: z
+        }
     }
 }
