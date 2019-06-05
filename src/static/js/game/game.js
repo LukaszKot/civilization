@@ -6,6 +6,7 @@ var windowObject = $(window);
 var updateSubscriber = []
 var cameraController;
 var ring;
+var unitInfo;
 $(document).ready(async function () {
     net = new Net();
     scene = new THREE.Scene();
@@ -29,6 +30,7 @@ $(document).ready(async function () {
 
     var map = await Map.create();
     scene.add(map.container)
+    unitInfo = new UnitInfo();
 
     $("#root").on("mousemove", (event) => {
         var xaxis = event.clientX / windowObject.width()
@@ -78,8 +80,8 @@ $(document).ready(async function () {
                 if (ring) scene.remove(ring)
                 ring = new Ring(intersected.position);
                 scene.add(ring)
-                $(".unit-info").css("display", "block")
-                $(".unit-name").html(intersected.logicData.type)
+                unitInfo.display();
+                unitInfo.setData(intersected.logicData)
             }
         }
     })

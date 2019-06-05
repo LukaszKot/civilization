@@ -14,7 +14,8 @@ class Settler extends THREE.Mesh {
         this.logicData = {
             owner: null,
             position: null,
-            type: "Settler"
+            type: "Settler",
+            orders: ["move", "build"]
         }
     }
 

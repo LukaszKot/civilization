@@ -55,6 +55,11 @@ class Map {
         if (map.players[map.nowPlaying].name != this.username) {
             $("#lock").css("display", "block")
         }
-        return new Map(map, settler);
+        this.map = new Map(map, settler);
+        return this.map;
+    }
+
+    static executeCommand(unit, command) {
+        console.log(unit, command)
     }
 }
