@@ -27,6 +27,8 @@ class Map {
                 }
                 else {
                     theSettler.material.color.setHex(0x0000ff);
+                    camera.position.set(theSettler.position.x, theSettler.position.y + 50, theSettler.position.z + 30)
+                    camera.lookAt(theSettler.position)
                 }
                 this.container.add(theSettler)
             }
