@@ -20,7 +20,7 @@ class UnitInfo {
                 $(".unit-data").html("Nic nie produkuje")
             }
         }
-        else if (data.logicData.type = "Settler") {
+        else {
             $(".unit-data").html("Pozostało " + data.logicData.moves + " ruchów w tej turze.")
         }
         $(".unit-name").html(data.logicData.type)

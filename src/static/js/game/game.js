@@ -86,24 +86,26 @@ $(document).ready(async function () {
     net.onUnitMoved((event) => {
         var to;
         var from;
-        var fromTile
+        var notTile;
         map.container.children.forEach(tile => {
-            if (tile.logicData != null && tile.logicData.position.x == event.to.position.x && tile.logicData.position.z == event.to.position.z) {
+            if (tile.logicData != null && tile.logicData.position.x == event.to.position.x && tile.logicData.position.z == event.to.position.z && tile.logicData.type == "Tile") {
                 to = tile;
             }
             if (tile.logicData != null && tile.logicData.position.x == event.from.position.x && tile.logicData.position.z == event.from.position.z && tile.logicData.type != "Tile" && tile.logicData.type != "City") {
                 from = tile;
             }
-            if (tile.logicData != null && tile.logicData.position.x == event.from.position.x && tile.logicData.position.z == event.from.position.z && tile.logicData.type == "Tile") {
-                fromTile = tile;
+        });
+        map.container.children.forEach(tile => {
+            if (tile.logicData != null && tile.logicData.position.x == event.to.position.x && tile.logicData.position.z == event.to.position.z && tile.logicData.type != "Tile") {
+                notTile = tile;
+                if (from.logicData.type == "Warrior") {
+                    map.container.remove(notTile)
+                }
             }
         });
         from.position.set(to.position.x, from.position.y, to.position.z)
         from.logicData.position = event.to.position
         from.logicData.moves -= event.usedMoves
-        to.logicData.unit = fromTile.logicData.unit;
-        //to.logicData.unit.moves -= event.usedMoves
-        fromTile.logicData.unit = null;
         if (command.data != null) {
             command.data.rings.forEach(ring => {
                 map.container.remove(ring)
@@ -125,6 +127,9 @@ $(document).ready(async function () {
                 if (object.logicData && object.logicData.type == "Settler") {
                     object.logicData.moves = 2;
                 }
+                if (object.logicData && object.logicData.type == "Warrior") {
+                    object.logicData.moves = 2;
+                }
 
                 if (object.logicData && object.logicData.type == "City") {
                     if (object.logicData.production) {
@@ -143,8 +148,21 @@ $(document).ready(async function () {
                             else {
                                 theSettler.material.color.setHex(0x0000ff);
                             }
-                            console.log(theSettler)
                             map.container.add(theSettler)
+                        }
+                        else if (object.logicData.production == "warrior") {
+                            var theWarrior = map.warriorMesh.clone();
+                            theWarrior.position.set(object.position.x, 2.5, object.position.z)
+                            theWarrior.setOwner(object.logicData.owner)
+                            theWarrior.setLogicPosition(object.logicData.position.x, object.logicData.position.z)
+                            theWarrior.setMoves(2)
+                            if (theWarrior.logicData.owner.name != Map.username) {
+                                theWarrior.material.color.setHex(0xff0000);
+                            }
+                            else {
+                                theWarrior.material.color.setHex(0x0000ff);
+                            }
+                            map.container.add(theWarrior)
                         }
                         object.logicData.turnToTheEnd = null;
                         object.logicData.production = null;
@@ -227,6 +245,14 @@ $(document).ready(async function () {
                     if (ring) scene.remove(ring)
                     ring = new Ring(intersected.position);
                     ring.position.y -= 2.5
+                    scene.add(ring)
+                    unitInfo.display();
+                    unitInfo.setData(intersected)
+                }
+                else if (intersected.logicData != null && intersected.logicData.type == "Warrior" && intersected.logicData.owner.name == Map.username) {
+                    if (ring) scene.remove(ring)
+                    ring = new Ring(intersected.position);
+                    ring.position.y -= 0.5
                     scene.add(ring)
                     unitInfo.display();
                     unitInfo.setData(intersected)

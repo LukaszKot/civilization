@@ -54,6 +54,9 @@ class SavesService {
             }
         });
         to.unit = from.unit;
+        if (from.unit.type == "Warrior" && to.city != null) {
+            to.city = null;
+        }
         from.unit = null;
         to.unit.moves -= usedMoves
         await this._savesRepository.update(save)
