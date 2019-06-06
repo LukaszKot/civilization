@@ -160,6 +160,11 @@ class SavesService {
             s.socket.emit("STARTED_UNIT_PRODUCTION", JSON.stringify({ tile: theTile }))
         });
     }
+
+    async deleteSave(socket) {
+        var theSocket = this._socketRepository.getById(socket.id);
+        await this._savesRepository.deleteSave(theSocket.saveId);
+    }
 }
 
 module.exports = { SavesService }

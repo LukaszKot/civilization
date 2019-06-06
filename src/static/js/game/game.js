@@ -113,6 +113,29 @@ $(document).ready(async function () {
         }
         command.name = null
         command.data = null
+        var yourUnits = 0;
+        map.container.children.forEach(object => {
+            if (object.logicData != null && object.logicData.type != null && object.logicData.type != "Tile" && object.logicData.owner.name == Map.username) {
+                yourUnits++;
+            }
+        });
+        if (yourUnits == 0) {
+            alert("Przegrałeś");
+            window.location.href = "/"
+        }
+
+        var enemyUnits = 0;
+        map.container.children.forEach(object => {
+            if (object.logicData != null && object.logicData.type != null && object.logicData.type != "Tile" && object.logicData.owner.name != Map.username) {
+                enemyUnits++;
+            }
+        });
+        if (enemyUnits == 0) {
+            alert("Wygrałeś");
+            net.deleteSave();
+            window.location.href = "/"
+        }
+
     })
 
     net.onNextTurnBegin((event) => {
@@ -152,7 +175,7 @@ $(document).ready(async function () {
                         }
                         else if (object.logicData.production == "warrior") {
                             var theWarrior = map.warriorMesh.clone();
-                            theWarrior.position.set(object.position.x, 2.5, object.position.z)
+                            theWarrior.position.set(object.position.x, 3, object.position.z)
                             theWarrior.setOwner(object.logicData.owner)
                             theWarrior.setLogicPosition(object.logicData.position.x, object.logicData.position.z)
                             theWarrior.setMoves(2)
@@ -185,7 +208,7 @@ $(document).ready(async function () {
                 map.container.remove(object);
                 scene.remove(ring);
                 var city = map.cityMesh.clone();
-                city.position.set(object.position.x, object.position.y, object.position.z);
+                city.position.set(object.position.x, object.position.y + 2.5, object.position.z);
                 city.logicData = event.tile.city
                 city.logicData.type = "City"
                 city.logicData.orders = ["settler", "warrior"]
@@ -204,6 +227,7 @@ $(document).ready(async function () {
         map.container.children.forEach(object => {
             if (object.logicData && object.logicData.position.x == event.tile.position.x && object.logicData.position.z == event.tile.position.z && object.logicData.type == "Tile") {
                 object.logicData = event.tile;
+                object.logicData.type = "Tile"
             }
         })
 

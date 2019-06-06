@@ -168,6 +168,10 @@ io.on('connection', (socket) => {
         var command = JSON.parse(msg);
         savesService.setProduction(socket, command.position, command.unit)
     })
+
+    socket.on("DELETE_SAVE", async () => {
+        savesService.deleteSave(socket);
+    })
 })
 
 app.get("/", function (req, res) {

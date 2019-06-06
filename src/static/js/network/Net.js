@@ -179,4 +179,8 @@ class Net {
         this._socketClient.subscribeEvent("STARTED_UNIT_PRODUCTION", callback);
     }
 
+    deleteSave() {
+        this._socketClient.publishCommand("DELETE_SAVE", {});
+    }
+
 }
