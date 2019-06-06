@@ -130,8 +130,20 @@ $(document).ready(async function () {
             if (object.logicData && object.logicData.position.x == event.tile.position.x && object.logicData.position.z == event.tile.position.z && object.logicData.type == "Settler") {
                 map.container.remove(object);
                 scene.remove(ring);
+                var city = map.cityMesh.clone();
+                city.position.set(object.position.x, object.position.y, object.position.z);
+                city.logicData.city = event.tile.city
+                city.logicData.position = event.tile.position
+                map.container.add(city)
             }
         });
+
+        map.container.children.forEach(object => {
+            if (object.logicData && object.logicData.position.x == event.tile.position.x && object.logicData.position.z == event.tile.position.z && object.logicData.type == "Tile") {
+                object.logicData = event.tile;
+            }
+        })
+
     })
 
     var raycaster = new THREE.Raycaster();
@@ -152,6 +164,13 @@ $(document).ready(async function () {
                     unitInfo.display();
                     unitInfo.setData(intersected)
 
+                } else if (intersected.logicData != null && intersected.logicData.type == "City" && intersected.logicData.owner.name == Map.username) {
+                    if (ring) scene.remove(ring)
+                    ring = new Ring(intersected.position);
+                    ring.position.y -= 2.5
+                    scene.add(ring)
+                    unitInfo.display();
+                    unitInfo.setData(intersected)
                 }
             }
         }
@@ -167,7 +186,6 @@ $(document).ready(async function () {
                 unitInfo.hide();
                 scene.remove(ring)
             }
-
         }
     })
     function render() {
