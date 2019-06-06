@@ -91,6 +91,34 @@ class LobbiesService {
             theSocket.socket.emit("CIVILIZATION_CHOOSEN", JSON.stringify(lobby))
         })
     }
+
+    async disconnectPlayer(socket) {
+        var theSocket = this._socketRepository.getById(socket.id);
+        if (theSocket == null) return;
+        this._socketRepository.remove(socket.id)
+        var currentLobby = this._socketRepository.getSocketsWhereLobbyIsEqualTo(theSocket.lobby)
+
+        this._lobbiesRepository.getSingle(theSocket.lobby)
+            .then(x => {
+                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
+                for (var i = 0; i < x.players.length; i++) {
+                    if (x.players[i].name == theSocket.name) {
+                        x.players.splice(i, 1)
+                        break;
+                    }
+                }
+                return this._lobbiesRepository.update(x)
+            })
+            .then(x => {
+                if (x) currentLobby.forEach(theSocket => {
+                    theSocket.socket.emit("PLAYER_LEAVED_THE_LOBBY", JSON.stringify(x))
+                })
+                if (x && x.players.length == 0) {
+                    this._lobbiesRepository.delete(x._id);
+                }
+            })
+            .catch(x => { })
+    }
 }
 
 module.exports = { LobbiesService }
