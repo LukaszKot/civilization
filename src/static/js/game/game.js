@@ -140,13 +140,10 @@ $(document).ready(async function () {
                 var city = map.cityMesh.clone();
                 city.position.set(object.position.x, object.position.y, object.position.z);
                 city.logicData = event.tile.city
-                console.log(city.logicData)
-                console.log(event)
                 city.logicData.type = "City"
                 city.logicData.orders = ["settler", "warrior"]
                 city.logicData.position = event.tile.position
                 city.logicData.owner = event.tile.city.owner
-                console.log(city.logicData)
                 if (city.logicData.owner.name == Map.username) {
                     city.material.color.setHex(0x0000ff)
                 }
@@ -174,8 +171,11 @@ $(document).ready(async function () {
         if (command.name == null) {
             var intersects = raycaster.intersectObjects(scene.children, true);
             if (intersects.length > 0) {
-
                 var intersected = intersects[0].object
+                if(intersected.logicData && intersected.logicData.owner)
+                {
+                }
+                
                 if (intersected.logicData != null && intersected.logicData.type == "Settler" && intersected.logicData.owner.name == Map.username) {
                     if (ring) scene.remove(ring)
                     ring = new Ring(intersected.position);
