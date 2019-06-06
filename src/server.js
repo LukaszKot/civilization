@@ -50,31 +50,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        var theSocket = socketRepository.getById(socket.id);
-        if (theSocket == null) return;
-        socketRepository.remove(socket.id)
-        var currentLobby = socketRepository.getSocketsWhereLobbyIsEqualTo(theSocket.lobby)
-
-        lobbiesRepository.getSingle(theSocket.lobby)
-            .then(x => {
-                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
-                for (var i = 0; i < x.players.length; i++) {
-                    if (x.players[i].name == theSocket.name) {
-                        x.players.splice(i, 1)
-                        break;
-                    }
-                }
-                return lobbiesRepository.update(x)
-            })
-            .then(x => {
-                if (x) currentLobby.forEach(theSocket => {
-                    theSocket.socket.emit("PLAYER_LEAVED_THE_LOBBY", JSON.stringify(x))
-                })
-                if (x && x.players.length == 0) {
-                    lobbiesRepository.delete(x._id);
-                }
-            })
-            .catch(x => { })
+        lobbiesService.disconnectPlayer(socket);
     })
 
     socket.on("KICK_PLAYER", (msg) => {
@@ -181,6 +157,11 @@ io.on('connection', (socket) => {
 
     socket.on("NEXT_TURN", async (msg) => {
         savesService.nextTurn(socket);
+    })
+
+    socket.on("BUILD_CITY", async (msg) => {
+        var command = JSON.parse(msg);
+        savesService.buildCity(socket, command.position)
     })
 })
 

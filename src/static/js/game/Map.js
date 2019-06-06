@@ -1,10 +1,11 @@
 class Map {
-    constructor(game, settlerMesh) {
+    constructor(game, settlerMesh, cityMesh) {
         if (game == null) throw new Error('Cannot be called directly');
         this.game = game;
         var tileRadius = Settings.tileRadius;
         this.container = new THREE.Object3D();
         this.settlerMesh = settlerMesh;
+        this.cityMesh = cityMesh
 
         for (var i = 0; i < this.game.map.tiles.length; i++) {
             var tileData = this.game.map.tiles[i];
@@ -34,6 +35,21 @@ class Map {
                 }
                 this.container.add(theSettler)
             }
+            else if (tileData.city != null) {
+                var city = cityMesh.clone();
+                city.position.set(tile.position.x, tile.position.y + 5, tile.position.z)
+                city.logicData = tileData.city
+                city.logicData.position = tileData.position;
+                city.logicData.type = "City"
+                city.logicData.orders = ["settler", "warrior"]
+                this.container.add(city)
+                if (city.logicData.owner.name != Map.username) {
+                    city.material.color.setHex(0xff0000);
+                }
+                else {
+                    city.material.color.setHex(0x0000ff);
+                }
+            }
             this.container.add(tile)
         }
         cameraController.setEndsOfMap(tileRadius * Math.sqrt(3) * (this.game.map.size.width - 1), 2 * (this.game.map.size.height - 1) * tileRadius - tileRadius / 2 * (this.game.map.size.height - 1))
@@ -53,11 +69,12 @@ class Map {
         });
         var map = await net.getSave(this.saveId);
         var settler = await Settler.load();
+        var city = await City.load();
         net.joinTheGame(this.saveId, this.username);
         if (map.players[map.nowPlaying].name != this.username) {
             $("#lock").css("display", "block")
         }
-        this.map = new Map(map, settler);
+        this.map = new Map(map, settler, city);
         return this.map;
     }
 
@@ -84,8 +101,10 @@ class Map {
                     command.data.tiles.push(object)
                 }
             });
-
-
+        }
+        else if (com == "build" && unit.logicData.moves > 0) {
+            net.buildCity(unit.logicData.position)
+            command.name == null
         }
     }
 }
