@@ -34,6 +34,15 @@ class SavesRepository {
             })
         })
     }
+
+    deleteSave(id) {
+        return new Promise((accept, reject) => {
+            this._collection.remove({ _id: id }, {}, (err, numRemoved) => {
+                if (err) reject(err)
+                accept(numRemoved)
+            })
+        })
+    }
 }
 
 module.exports = { SavesRepository };

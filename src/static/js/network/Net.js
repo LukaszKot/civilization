@@ -171,4 +171,16 @@ class Net {
         this._socketClient.subscribeEvent("CITY_BUILDED", callback);
     }
 
+    setProduction(position, unit) {
+        this._socketClient.publishCommand("SET_PRODUCTION", { position: position, unit: unit })
+    }
+
+    onStartedUnitProduction(callback) {
+        this._socketClient.subscribeEvent("STARTED_UNIT_PRODUCTION", callback);
+    }
+
+    deleteSave() {
+        this._socketClient.publishCommand("DELETE_SAVE", {});
+    }
+
 }

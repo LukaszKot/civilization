@@ -54,3 +54,8 @@ body
     cursor: pointer;
     z-index: 1;
 }
+
+.unit-data
+{
+    color: white;
+}
