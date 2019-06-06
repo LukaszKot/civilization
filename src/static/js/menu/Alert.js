@@ -73,24 +73,6 @@ class Alert {
             .attr("id", "alertText")
             .addClass("alert")
             .html(importedTextInAlert)
-        this.maps = ["Pierwsza", "Druga"]
-        this.nextMap = $("<select>")
-            .css("color", "black")
-            .attr("name", "alertLoadSelect")
-            .attr("id", "alertLoadSelect")
-            .addClass("alert")
-        for (var i = 0; i < this.maps.length; i++) {
-            this.addingMaps = $("<option>")
-                .html(this.maps[i])
-            this.nextMap.append(this.addingMaps)
-        }
-        var alertButtonOne = $("<button>")
-            .attr("id", "alertButton")
-            .addClass("alert")
-            .html("Wczytaj")
-            .on("click", () => {
-                $(".alert").remove();
-            })
         var alertButton = $("<button>")
             .attr("id", "alertButton")
             .addClass("alert")
@@ -103,8 +85,6 @@ class Alert {
             .css("height", "37vh")
             .addClass("alert")
             .append(alertText)
-            .append(this.nextMap)
-            .append(alertButtonOne)
             .append("<br>")
             .append(alertButton)
         main.append(alert)
