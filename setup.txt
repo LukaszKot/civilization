@@ -1,8 +1,9 @@
 1. Otworzyć nową konsole w folerze gry.
-2. Wpisać w konsoli "npm install"
-3. Wpisać w konsoli "node server.js"
-4. Otworzyć dwóch klientów w przeglądarce (trzeba na osobnych przeglądarkach lub jednego na trybie incognito z powodu cookies).
-5. Grać!
+2. Przejść do katalogu src.
+3. Wpisać w konsoli "npm install"
+4. Wpisać w konsoli "node server.js"
+5. Otworzyć dwóch klientów w przeglądarce (trzeba na osobnych przeglądarkach lub jednego na trybie incognito z powodu cookies).
+6. Grać!
 
 Założenia gry :
 1. Tworzenie miast za pomocą osadników.
