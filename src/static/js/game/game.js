@@ -65,8 +65,17 @@ $(document).ready(async function () {
     })
 
     $("#next-turn").on("click", (event) => {
+        if (command.name == "move") return;
         $("#lock").css("display", "block")
         net.nextTurn();
+    })
+
+    $(window).on("keyup", (event) => {
+        if (event.keyCode == 13 && $("#lock").css("display") == "none") {
+            if (command.name == "move") return;
+            $("#lock").css("display", "block")
+            net.nextTurn();
+        }
     })
 
 
@@ -132,8 +141,17 @@ $(document).ready(async function () {
                 scene.remove(ring);
                 var city = map.cityMesh.clone();
                 city.position.set(object.position.x, object.position.y, object.position.z);
-                city.logicData.city = event.tile.city
+                city.logicData = event.tile.city
+                city.logicData.type = "City"
+                city.logicData.orders = ["settler", "warrior"]
                 city.logicData.position = event.tile.position
+                city.logicData.owner = event.tile.city.owner
+                if (city.logicData.owner.name == Map.username) {
+                    city.material.color.setHex(0x0000ff)
+                }
+                else {
+                    city.material.color.setHex(0xff0000)
+                }
                 map.container.add(city)
             }
         });
@@ -155,8 +173,10 @@ $(document).ready(async function () {
         if (command.name == null) {
             var intersects = raycaster.intersectObjects(scene.children, true);
             if (intersects.length > 0) {
-
                 var intersected = intersects[0].object
+                if (intersected.logicData && intersected.logicData.owner) {
+                }
+
                 if (intersected.logicData != null && intersected.logicData.type == "Settler" && intersected.logicData.owner.name == Map.username) {
                     if (ring) scene.remove(ring)
                     ring = new Ring(intersected.position);
