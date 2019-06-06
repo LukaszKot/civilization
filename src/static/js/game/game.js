@@ -65,12 +65,14 @@ $(document).ready(async function () {
     })
 
     $("#next-turn").on("click", (event) => {
+        if (command.name == "move") return;
         $("#lock").css("display", "block")
         net.nextTurn();
     })
 
     $(window).on("keyup", (event) => {
         if (event.keyCode == 13 && $("#lock").css("display") == "none") {
+            if (command.name == "move") return;
             $("#lock").css("display", "block")
             net.nextTurn();
         }
@@ -172,10 +174,9 @@ $(document).ready(async function () {
             var intersects = raycaster.intersectObjects(scene.children, true);
             if (intersects.length > 0) {
                 var intersected = intersects[0].object
-                if(intersected.logicData && intersected.logicData.owner)
-                {
+                if (intersected.logicData && intersected.logicData.owner) {
                 }
-                
+
                 if (intersected.logicData != null && intersected.logicData.type == "Settler" && intersected.logicData.owner.name == Map.username) {
                     if (ring) scene.remove(ring)
                     ring = new Ring(intersected.position);

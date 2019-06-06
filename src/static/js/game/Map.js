@@ -83,8 +83,8 @@ class Map {
     }
 
     execCommand(unit, com) {
-        if(command.name=="build")
-        command.name = com;
+        if (command.name != "build")
+            command.name = com;
         if (com == "move") {
             command.data = {
                 rings: [],
