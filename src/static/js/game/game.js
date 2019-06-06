@@ -69,6 +69,13 @@ $(document).ready(async function () {
         net.nextTurn();
     })
 
+    $(window).on("keyup", (event) => {
+        if (event.keyCode == 13 && $("#lock").css("display") == "none") {
+            $("#lock").css("display", "block")
+            net.nextTurn();
+        }
+    })
+
 
     net.onPlayerJoinedTheGame(() => {
         console.log("player joined the game")
@@ -132,8 +139,20 @@ $(document).ready(async function () {
                 scene.remove(ring);
                 var city = map.cityMesh.clone();
                 city.position.set(object.position.x, object.position.y, object.position.z);
-                city.logicData.city = event.tile.city
+                city.logicData = event.tile.city
+                console.log(city.logicData)
+                console.log(event)
+                city.logicData.type = "City"
+                city.logicData.orders = ["settler", "warrior"]
                 city.logicData.position = event.tile.position
+                city.logicData.owner = event.tile.city.owner
+                console.log(city.logicData)
+                if (city.logicData.owner.name == Map.username) {
+                    city.material.color.setHex(0x0000ff)
+                }
+                else {
+                    city.material.color.setHex(0xff0000)
+                }
                 map.container.add(city)
             }
         });
