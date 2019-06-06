@@ -53,27 +53,6 @@ io.on('connection', (socket) => {
         lobbiesService.disconnectPlayer(socket);
     })
 
-    socket.on("KICK_PLAYER", (msg) => {
-        var command = JSON.parse(msg);
-        var currentLobby;
-        lobbiesRepository.getSingle(command.lobby)
-            .then(x => {
-                if (x == null) throw "LOBBY_DOES_NOT_EXIST";
-
-                currentLobby = socketRepository.getSocketsWhereLobbyIsEqualTo(command.lobby)
-
-                if (command.playerName == x.players[0].name) throw "HOST_CANNOT_BE_KICKED";
-                for (var i = 0; i < currentLobby.length; i++) {
-                    if (currentLobby[i].name == command.playerName) {
-                        currentLobby[i].socket.disconnect();
-                    }
-                }
-            })
-            .catch(x => {
-                socket.emit(x, JSON.stringify({}))
-            })
-    })
-
     socket.on("START_GAME", (msg) => {
         var command = JSON.parse(msg);
 
