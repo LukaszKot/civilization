@@ -35,7 +35,7 @@ class Map {
                 }
                 this.container.add(theSettler)
             }
-            else if (tileData.city != null) {
+            if (tileData.city != null) {
                 var city = cityMesh.clone();
                 city.position.set(tile.position.x, tile.position.y + 5, tile.position.z)
                 city.logicData = tileData.city
@@ -83,8 +83,9 @@ class Map {
     }
 
     execCommand(unit, com) {
-        if (command.name != "build")
-            command.name = com;
+        if (com != "move")
+            command.name = null;
+        else command.name = com
         if (com == "move") {
             command.data = {
                 rings: [],
@@ -105,7 +106,9 @@ class Map {
         }
         else if (com == "build" && unit.logicData.moves > 0) {
             net.buildCity(unit.logicData.position)
-            command.name == null
+        }
+        else if (com == "settler" || com == "warrior") {
+            net.setProduction(unit.logicData.position, com)
         }
     }
 }

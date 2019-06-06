@@ -163,6 +163,11 @@ io.on('connection', (socket) => {
         var command = JSON.parse(msg);
         savesService.buildCity(socket, command.position)
     })
+
+    socket.on("SET_PRODUCTION", async (msg) => {
+        var command = JSON.parse(msg);
+        savesService.setProduction(socket, command.position, command.unit)
+    })
 })
 
 app.get("/", function (req, res) {

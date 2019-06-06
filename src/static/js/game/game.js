@@ -91,7 +91,7 @@ $(document).ready(async function () {
             if (tile.logicData != null && tile.logicData.position.x == event.to.position.x && tile.logicData.position.z == event.to.position.z) {
                 to = tile;
             }
-            if (tile.logicData != null && tile.logicData.position.x == event.from.position.x && tile.logicData.position.z == event.from.position.z && tile.logicData.type != "Tile") {
+            if (tile.logicData != null && tile.logicData.position.x == event.from.position.x && tile.logicData.position.z == event.from.position.z && tile.logicData.type != "Tile" && tile.logicData.type != "City") {
                 from = tile;
             }
             if (tile.logicData != null && tile.logicData.position.x == event.from.position.x && tile.logicData.position.z == event.from.position.z && tile.logicData.type == "Tile") {
@@ -102,7 +102,7 @@ $(document).ready(async function () {
         from.logicData.position = event.to.position
         from.logicData.moves -= event.usedMoves
         to.logicData.unit = fromTile.logicData.unit;
-        to.logicData.unit.moves -= event.usedMoves
+        //to.logicData.unit.moves -= event.usedMoves
         fromTile.logicData.unit = null;
         if (command.data != null) {
             command.data.rings.forEach(ring => {
@@ -114,6 +114,7 @@ $(document).ready(async function () {
     })
 
     net.onNextTurnBegin((event) => {
+        unitInfo.hide();
         map.game.turn = event.turn
         map.game.nowPlaying = event.nowPlaying;
         if (map.game.nowPlaying == 0) {
@@ -123,6 +124,32 @@ $(document).ready(async function () {
                 }
                 if (object.logicData && object.logicData.type == "Settler") {
                     object.logicData.moves = 2;
+                }
+
+                if (object.logicData && object.logicData.type == "City") {
+                    if (object.logicData.production) {
+                        object.logicData.turnToTheEnd--;
+                    }
+                    if (object.logicData.turnToTheEnd == 0) {
+                        if (object.logicData.production == "settler") {
+                            var theSettler = map.settlerMesh.clone();
+                            theSettler.position.set(object.position.x, 2.5, object.position.z)
+                            theSettler.setOwner(object.logicData.owner)
+                            theSettler.setLogicPosition(object.logicData.position.x, object.logicData.position.z)
+                            theSettler.setMoves(2)
+                            if (theSettler.logicData.owner.name != Map.username) {
+                                theSettler.material.color.setHex(0xff0000);
+                            }
+                            else {
+                                theSettler.material.color.setHex(0x0000ff);
+                            }
+                            console.log(theSettler)
+                            map.container.add(theSettler)
+                        }
+                        object.logicData.turnToTheEnd = null;
+                        object.logicData.production = null;
+                    }
+
                 }
             });
         }
@@ -161,6 +188,18 @@ $(document).ready(async function () {
                 object.logicData = event.tile;
             }
         })
+
+    })
+
+    net.onStartedUnitProduction(event => {
+        var city;
+        map.container.children.forEach(object => {
+            if (object.logicData && object.logicData.position.x == event.tile.position.x && object.logicData.position.z == event.tile.position.z && object.logicData.type == "City") {
+                city = object;
+            }
+        })
+        city.logicData.production = event.tile.city.production;
+        city.logicData.turnToTheEnd = event.tile.city.turnToTheEnd;
 
     })
 

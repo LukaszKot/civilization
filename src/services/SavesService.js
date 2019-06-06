@@ -99,7 +99,17 @@ class SavesService {
             save.map.tiles.forEach(tile => {
                 if (tile.unit)
                     tile.unit.moves = 2
+
+                if (tile.city && tile.city.production) {
+                    tile.city.turnToTheEnd--;
+                    if (tile.city.turnToTheEnd == 0) {
+                        tile.unit = { type: tile.city.production.charAt(0).toUpperCase() + tile.city.production.slice(1), owner: tile.city.owner, moves: 2 }
+                        tile.city.production = null;
+                        tile.city.turnToTheEnd = null;
+                    }
+                }
             })
+
         }
         await this._savesRepository.update(save);
         currentGame.forEach(element => {
@@ -127,6 +137,24 @@ class SavesService {
         await this._savesRepository.update(save)
         currentGame.forEach(s => {
             s.socket.emit("CITY_BUILDED", JSON.stringify({ tile: theTile }))
+        });
+    }
+
+    async setProduction(socket, position, unit) {
+        var theSocket = this._socketRepository.getById(socket.id);
+        var currentGame = this._socketRepository.getSocketsWhereGameIsEqualTo(theSocket.saveId);
+        var save = await this._savesRepository.getSingle(theSocket.saveId);
+        var theTile;
+        save.map.tiles.forEach(tile => {
+            if (tile.position.x == position.x && tile.position.z == position.z) {
+                theTile = tile;
+            }
+        });
+        theTile.city.production = unit;
+        theTile.city.turnToTheEnd = 5;
+        await this._savesRepository.update(save)
+        currentGame.forEach(s => {
+            s.socket.emit("STARTED_UNIT_PRODUCTION", JSON.stringify({ tile: theTile }))
         });
     }
 }
